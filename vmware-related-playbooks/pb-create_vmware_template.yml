@@ -13,23 +13,6 @@
   hosts: webservers
   become: true
 
-  vars:
-
-    #Remember to pass the ENV variables "VMWARE_HOST" and "VMWARE_PASSWORD" to the EE
-
-    #Vars related to VMware cluster:
-    my_vmware_cluster: Cluster-1
-    my_vmware_datastore: WorkloadDatastore
-    my_vmware_folder: Workloads/sandbox-k8jqg
-    #my_vmware_resource_pool: rp1
-
-    #Vars related to the template
-
-    my_template_cpu_count: 2
-    my_template_memory_mib: 4096
-    my_template_disk_capacity_bytes: 2684354560
-    my_iso_file_path: '[ds_171_2] isos/CentOS-7.0-1406-x86_64-DVD.iso'
-    
   tasks:
 
     - name: Boot virtual machine from our custom ISO image in CDROM
