@@ -1,5 +1,15 @@
 # bcl_use_case2
 
+## Action plan:
+
+Create the following roles:
+
+ - RHEL custom ISO creation > we have it
+ - Preparation of Windows ISO with WinRM enabled > Ale has something
+ - Create VMware templates from custom ISO's > we cannot test it at the moment
+ - Create VM from templates > Pablo
+ - Configure web server > Amaya
+
 ## deploy_webserver.yml
 
 No Variable is needed for it, just replace the *logo.png* with an actual logo to show.
