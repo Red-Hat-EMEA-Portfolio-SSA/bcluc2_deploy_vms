@@ -56,7 +56,7 @@
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
         filter_names:
-        - temporary_vm_do_not_delete
+        - bastion #temporary_vm_do_not_delete
 
     - name: Show my_vm
       ansible.builtin.debug:
@@ -70,3 +70,17 @@
     - name: Show my_vm
       ansible.builtin.debug:
         var: test_vm1_info
+
+    - name: Get the dvswitch called my-portgroup
+      vmware.vmware_rest.vcenter_network_info:
+        filter_types: DISTRIBUTED_PORTGROUP
+        #filter_names: my portrgoup
+      register: my_portgroup
+
+    - name: Show distributed port groups
+      ansible.builtin.debug:
+        var: my_portgroup
+
+    #- name: lookup MoID of the object inside the path
+    #  ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.network_moid', '/SDCC-Datacenter/vmc-hostswitch/segment-sandbox-p69ll') }}"
+

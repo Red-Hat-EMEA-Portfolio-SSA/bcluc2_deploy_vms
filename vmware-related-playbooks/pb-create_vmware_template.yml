@@ -80,17 +80,14 @@
               bus: 0
               unit: 0
             state: connected
-        #boot_devices:
-        #  - type: CDROM
         disks:
           - type: SATA
             new_vmdk:
-              #name: template_disk
               capacity: "{{ my_template_disk_capacity_bytes }}"
-        #nics:
-        #  - backing:
-        #      type: STANDARD_PORTGROUP
-        #      network: "{{ lookup('vmware.vmware_rest.network_moid', '/my_dc/network/VM Network') }}"
+        nics:
+          - backing:
+              type: DISTRIBUTED_PORTGROUP
+              network: "{{ lookup('vmware.vmware_rest.network_moid', '/SDCC-Datacenter/vmc-hostswitch/segment-sandbox-p69ll') }}"
 
     - name: Look up the VM called test_vm1 in the inventory
       register: my_vm
