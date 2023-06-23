@@ -10,7 +10,30 @@ Create the following roles:
  - Create VM from templates > Pablo
  - Configure web server > Amaya
 
+## autounattend.xml
+
+To generate a modified ISO with unattended installation for Windows:
+
+- Download Windows Server 2019 ISO
+- Mount the iso on a Linux box
+- Copy the mounted content in a writable directory
+- Add the autounattend.xml file to the directory root
+- Regenerate the ISO
+
+    sudo mkdir {/windows,/windows_iso}
+    sudo mount windows-server-2019.iso /windows
+    sudo cp -r /windows /windows_iso
+    sudo umount /windows
+    sudo cp autounattend.xml /windows_iso
+    genisoimage   -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8 -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" -boot-load-size 1 -iso-level 4 -o "windows-unattended.iso"
+
+The setup creates the admin user **Administrator/redhat** and configures *WinRM* to connect to the machine with Ansible
+
 ## deploy_webserver.yml
+
+No Variable is needed for it, just replace the *logo.png* with an actual logo to show.
+
+## deploy_iis.yml
 
 No Variable is needed for it, just replace the *logo.png* with an actual logo to show.
 
@@ -34,3 +57,5 @@ podman push ghcr.io/pablo-preciado/bcl_demo:vmware_rest_ee
 || nameserver        | Nameserver for the interface                    | :x: | N/A | Mandatory if *ip* is static
 || primary           | Boolean to check if interace is primary         | :x: | N/A | Mandatory if *ip* is static. If true, *ks_hostname* must be set
 || vlanid            | Vlan ID for the device                          | :x: | N/A | Mandatory if *ip* is static
+
+

@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 vmware-related-playbooks/vmware_rest-ee/context/
 *.log
+=======
+.vscode
+>>>>>>> da001f2519cafa139ff39ce0b9ff805bb2c8fe13
