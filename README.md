@@ -18,12 +18,15 @@ To generate a modified ISO with unattended installation for Windows:
 - Mount the iso on a Linux box
 - Copy the mounted content in a writable directory
 - Add the autounattend.xml file to the directory root
+- Remove files to skip the initial prompt in setup
 - Regenerate the ISO
 
     sudo mkdir {/windows,/windows_iso}
     sudo mount windows-server-2019.iso /windows
     sudo cp -r /windows /windows_iso
     sudo umount /windows
+    sudo rm -rf /windows_iso/efi/microsoft/boot/{efisys.bin,cdboot.efi}
+    sudo mv /windows_iso/efi/microsoft/boot/efisys_noprompt.bin /windows_iso/efi/microsoft/boot/efisys.bin && mv /windows_iso/efi/microsoft/boot/cdboot_noprompt.efi /windows_iso/efi/microsoft/boot/cdboot.efi
     sudo cp autounattend.xml /windows_iso
     genisoimage   -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8 -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" -boot-load-size 1 -iso-level 4 -o "windows-unattended.iso"
 
