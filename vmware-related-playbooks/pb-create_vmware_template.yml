@@ -15,23 +15,43 @@
 
   tasks:
 
-    - name: Get id of child folder
+    - name: Get DS folder
       vmware.vmware_rest.vcenter_folder_info:
-        parent_folders: group-v47
-      register: my_folder
+        #folders: group-s6
+        #names: WorkloadDatastore
+        type: "DATASTORE"
+      register: my_ds_folder
 
-    - name: Show list of child folders
+    - name: Show list of DS folders
       ansible.builtin.debug:
-        var: my_folder
+        var: my_ds_folder
 
-    - name: Build a list of all the clusters
-      vmware.vmware_rest.vcenter_cluster_info:
-      register: all_the_clusters
-
-    - name: Show list of child folders
-      ansible.builtin.debug:
-        var: all_the_clusters
-
+    #- name: Get id of child folder
+    #  vmware.vmware_rest.vcenter_folder_info:
+    #    parent_folders: group-v47
+    #  register: my_folder
+#
+    #- name: Show list of child folders
+    #  ansible.builtin.debug:
+    #    var: my_folder
+#
+    #- name: Build a list of all the clusters
+    #  vmware.vmware_rest.vcenter_cluster_info:
+    #  register: all_the_clusters
+#
+    #- name: Show list of clusters
+    #  ansible.builtin.debug:
+    #    var: all_the_clusters
+#
+    #- name: Build a list of all the datastores
+    #  vmware.vmware_rest.vcenter_datastore_info:
+    #    names: WorkloadDatastore
+    #  register: all_the_datastores
+#
+    #- name: Show list of datastores
+    #  ansible.builtin.debug:
+    #    var: all_the_datastores
+#
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
