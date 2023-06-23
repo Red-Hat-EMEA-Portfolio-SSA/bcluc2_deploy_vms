@@ -1,0 +1,22 @@
+---
+- name: Playbook to create a VMware template from a custom iso image
+  hosts: localhost
+  become: true
+
+  tasks:
+
+    - name: Look up the VM called temporary_vm_do_not_delete in the inventory
+      register: my_vm
+      vmware.vmware_rest.vcenter_vm_info:
+        filter_names:
+        - temporary_vm_do_not_delete
+
+    - name: Turn the power of the VM on
+      vmware.vmware_rest.vcenter_vm_power:
+        state: stop
+        vm: "{{ my_vm.value[0].vm }}" 
+
+    - name: Delete VM
+      vmware.vmware_rest.vcenter_vm:
+        vm: '{{ my_vm.value[0].vm }}'
+        state: absent

@@ -52,46 +52,6 @@
     #  ansible.builtin.debug:
     #    var: all_the_datastores
 
-    - name: Boot virtual machine from our custom ISO image in CDROM
-      #register: my_vm
-      vmware.vmware_rest.vcenter_vm:
-        placement:
-          cluster: "{{ my_vmware_cluster }}"
-          datastore: "{{ my_vmware_datastore }}"
-          folder: "{{ my_vmware_folder }}"
-          #resource_pool: "{{ my_vmware_resource_pool }}"
-        name: temporary_vm_do_not_delete
-        guest_OS: RHEL_9_64
-        power_on: true
-        hardware_version: VMX_19
-        cpu:
-          count: "{{ my_template_cpu_count }}"
-        memory:
-          hot_add_enabled: true
-          size_MiB: "{{ my_template_memory_mib }}"
-        cdroms:
-          - start_connected: true
-            backing:
-              iso_file: "{{ my_iso_file_path }}"
-              type: ISO_FILE
-              state: present
-            type: SATA
-            sata:
-              bus: 0
-              unit: 0
-            state: connected
-        #boot_devices:
-        #  - type: CDROM
-        disks:
-          - type: SATA
-            new_vmdk:
-              #name: template_disk
-              capacity: "{{ my_template_disk_capacity_bytes }}"
-        #nics:
-        #  - backing:
-        #      type: STANDARD_PORTGROUP
-        #      network: "{{ lookup('vmware.vmware_rest.network_moid', '/my_dc/network/VM Network') }}"
-
     - name: Look up the VM called test_vm1 in the inventory
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
@@ -102,8 +62,11 @@
       ansible.builtin.debug:
         var: my_vm.value
 
-    - name: Turn the power of the VM on
-      #loop: my_vm
-      vmware.vmware_rest.vcenter_vm_power:
-        state: start
-        vm: "{{ my_vm.value[0].vm }}" #vm-15251 #'{{ my_vm.id }}'
+    - name: Collect information about a specific VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ my_vm.value[0].vm }}'
+      register: test_vm1_info
+
+    - name: Show my_vm
+      ansible.builtin.debug:
+        var: test_vm1_info
