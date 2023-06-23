@@ -11,5 +11,5 @@ my_vmware_folder: group-v15049
 
 my_template_cpu_count: 2
 my_template_memory_mib: 4096
-my_template_disk_capacity_bytes: 2684354560
-my_iso_file_path: "[WorkloadDatastore] f6589564-dec2-b54c-e7e2-02f991890f03/rhel-9.2-x86_64-dvd.iso"
+my_template_disk_capacity_bytes: 53687091200
+my_iso_file_path: "[WorkloadDatastore] f6589564-dec2-b54c-e7e2-02f991890f03/windows-server-2019.iso"
