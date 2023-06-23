@@ -10,7 +10,7 @@
 ########################################################################
 ---
 - name: Playbook to create a VMware template from a custom iso image
-  hosts: webservers
+  hosts: localhost
   become: true
 
   tasks:

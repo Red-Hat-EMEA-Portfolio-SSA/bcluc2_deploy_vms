@@ -15,3 +15,25 @@ Remember to modify the vars.yml file with your values and then run the playbook:
 ```
 ansible-navigator run pb-create_vmware_template.yml -e @vars.yml
 ```
+
+## Create a VMware_rest execution environment
+
+Install ansible-builder:
+
+´´´
+pip install ansible-builder
+
+´´´
+Navigate to the vmware_rest-ee directory and run:
+
+```
+ansible-builder build -f execution-environment.yml -t vmware_rest-ee:1 -v 3
+```
+
+We've built our image with community content and uploaded to ghcr.io, but we highly recommend you to build your build your own image with secure and stable content coming from Red Hat subscriptions. Once you've built it change the image reference in ansible-navigator.yml.
+
+In case you still want to use our unsecure and unstable image you can pull it from:
+
+´´´
+podman pull ghcr.io/red-hat-emea-portfolio-ssa/bcl_use_case2:vmware_rest_ee
+´´´
