@@ -20,10 +20,10 @@ ansible-navigator run pb-create_vmware_template.yml -e @vars.yml
 
 Install ansible-builder:
 
-´´´
+```
 pip install ansible-builder
 
-´´´
+```
 Navigate to the vmware_rest-ee directory and run:
 
 ```
@@ -34,6 +34,6 @@ We've built our image with community content and uploaded to ghcr.io, but we hig
 
 In case you still want to use our unsecure and unstable image you can pull it from:
 
-´´´
+```
 podman pull ghcr.io/red-hat-emea-portfolio-ssa/bcl_use_case2:vmware_rest_ee
-´´´
+```
