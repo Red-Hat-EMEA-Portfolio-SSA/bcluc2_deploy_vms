@@ -22,7 +22,6 @@ Install ansible-builder:
 
 ```
 pip install ansible-builder
-
 ```
 Navigate to the vmware_rest-ee directory and run:
 

@@ -15,6 +15,23 @@
 
   tasks:
 
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: group-v47
+      register: my_folder
+
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: my_folder
+
+    - name: Build a list of all the clusters
+      vmware.vmware_rest.vcenter_cluster_info:
+      register: all_the_clusters
+
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: all_the_clusters
+
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
