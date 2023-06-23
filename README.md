@@ -16,6 +16,7 @@ No Variable is needed for it, just replace the *logo.png* with an actual logo to
 
 ## prepare_iso.yml
 
+podman push ghcr.io/pablo-preciado/bcl_demo:vmware_rest_ee
 
 | Variable | Subelements | Description | Required | Default | Notes |
 | -- | -- | -- | -- | -- | -- |
