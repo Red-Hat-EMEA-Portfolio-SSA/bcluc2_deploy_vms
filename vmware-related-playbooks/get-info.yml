@@ -12,45 +12,46 @@
 - name: Playbook to create a VMware template from a custom iso image
   hosts: localhost
   become: true
+  gather_facts: false
 
   tasks:
 
-    #- name: Get DS folder
-    #  vmware.vmware_rest.vcenter_folder_info:
-    #    #folders: group-s6
-    #    #names: WorkloadDatastore
-    #    type: "DATASTORE"
-    #  register: my_ds_folder
-#
-    #- name: Show list of DS folders
-    #  ansible.builtin.debug:
-    #    var: my_ds_folder
+    - name: Get DS folder
+      vmware.vmware_rest.vcenter_folder_info:
+        #folders: group-s6
+        #names: WorkloadDatastore
+        type: "DATASTORE"
+      register: my_ds_folder
 
-    #- name: Get id of child folder
-    #  vmware.vmware_rest.vcenter_folder_info:
-    #    parent_folders: group-v47
-    #  register: my_folder
-#
-    #- name: Show list of child folders
-    #  ansible.builtin.debug:
-    #    var: my_folder
-#
-    #- name: Build a list of all the clusters
-    #  vmware.vmware_rest.vcenter_cluster_info:
-    #  register: all_the_clusters
-#
-    #- name: Show list of clusters
-    #  ansible.builtin.debug:
-    #    var: all_the_clusters
+    - name: Show list of DS folders
+      ansible.builtin.debug:
+        var: my_ds_folder
 
-    #- name: Build a list of all the datastores
-    #  vmware.vmware_rest.vcenter_datastore_info:
-    #    names: WorkloadDatastore
-    #  register: all_the_datastores
-#
-    #- name: Show list of datastores
-    #  ansible.builtin.debug:
-    #    var: all_the_datastores
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: group-v47
+      register: my_folder
+
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: my_folder
+
+    - name: Build a list of all the clusters
+      vmware.vmware_rest.vcenter_cluster_info:
+      register: all_the_clusters
+
+    - name: Show list of clusters
+      ansible.builtin.debug:
+        var: all_the_clusters
+
+    - name: Build a list of all the datastores
+      vmware.vmware_rest.vcenter_datastore_info:
+        names: WorkloadDatastore
+      register: all_the_datastores
+
+    - name: Show list of datastores
+      ansible.builtin.debug:
+        var: all_the_datastores
 
     - name: Look up the VM called test_vm1 in the inventory
       register: my_vm
@@ -81,6 +82,38 @@
       ansible.builtin.debug:
         var: my_portgroup
 
-    #- name: lookup MoID of the object inside the path
-    #  ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.network_moid', '/SDCC-Datacenter/vmc-hostswitch/segment-sandbox-p69ll') }}"
+    - name: Get DS folder
+      vmware.vmware_rest.vcenter_folder_info:
+        #folders: group-s6
+        #names: WorkloadDatastore
+        type: "DATASTORE"
+      register: my_ds_folder
 
+    - name: Show list of DS folders
+      ansible.builtin.debug:
+        var: my_ds_folder
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug:
+        msg: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
+
+    - name: lookup MoID of the object
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads/sandbox-6kmgg') }}"
+
+    - name: Get id of child folder
+      tags: caca
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_vm_parent_folder_name }}') }}"
+      register: my_folder
+
+    - name: Show list of child folders
+      tags: caca
+      ansible.builtin.debug:
+        var: my_folder.value[0].folder

@@ -12,54 +12,25 @@
 - name: Playbook to create a VMware template from a custom iso image
   hosts: localhost
   become: true
+  gather_facts: false
 
   tasks:
 
-    #- name: Get DS folder
-    #  vmware.vmware_rest.vcenter_folder_info:
-    #    #folders: group-s6
-    #    #names: WorkloadDatastore
-    #    type: "DATASTORE"
-    #  register: my_ds_folder
-#
-    #- name: Show list of DS folders
-    #  ansible.builtin.debug:
-    #    var: my_ds_folder
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads') }}"
+      register: my_folder
 
-    #- name: Get id of child folder
-    #  vmware.vmware_rest.vcenter_folder_info:
-    #    parent_folders: group-v47
-    #  register: my_folder
-#
-    #- name: Show list of child folders
-    #  ansible.builtin.debug:
-    #    var: my_folder
-#
-    #- name: Build a list of all the clusters
-    #  vmware.vmware_rest.vcenter_cluster_info:
-    #  register: all_the_clusters
-#
-    #- name: Show list of clusters
-    #  ansible.builtin.debug:
-    #    var: all_the_clusters
-
-    #- name: Build a list of all the datastores
-    #  vmware.vmware_rest.vcenter_datastore_info:
-    #    names: WorkloadDatastore
-    #  register: all_the_datastores
-#
-    #- name: Show list of datastores
-    #  ansible.builtin.debug:
-    #    var: all_the_datastores
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: my_folder.value[0].folder
 
     - name: Boot virtual machine from our custom ISO image in CDROM
-      #register: my_vm
       vmware.vmware_rest.vcenter_vm:
         placement:
-          cluster: "{{ my_vmware_cluster }}"
-          datastore: "{{ my_vmware_datastore }}"
-          folder: "{{ my_vmware_folder }}"
-          #resource_pool: "{{ my_vmware_resource_pool }}"
+          cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+          datastore: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+          folder: "{{ my_folder.value[0].folder }}"
         name: temporary_vm_do_not_delete
         guest_OS: RHEL_9_64
         power_on: true
@@ -83,11 +54,11 @@
         disks:
           - type: SATA
             new_vmdk:
-              capacity: "{{ my_template_disk_capacity_bytes }}"
+              capacity: '{{ my_template_disk_capacity_gb | human_to_bytes(default_unit="G") }}'
         nics:
           - backing:
               type: DISTRIBUTED_PORTGROUP
-              network: "{{ lookup('vmware.vmware_rest.network_moid', '/SDCC-Datacenter/vmc-hostswitch/segment-sandbox-p69ll') }}"
+              network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
 
     - name: Look up the VM called test_vm1 in the inventory
       register: my_vm
@@ -95,12 +66,7 @@
         filter_names:
         - temporary_vm_do_not_delete
 
-    - name: Show my_vm
-      ansible.builtin.debug:
-        var: my_vm.value
-
     - name: Turn the power of the VM on
-      #loop: my_vm
       vmware.vmware_rest.vcenter_vm_power:
         state: start
-        vm: "{{ my_vm.value[0].vm }}" #vm-15251 #'{{ my_vm.id }}'
+        vm: "{{ my_vm.value[0].vm }}"
