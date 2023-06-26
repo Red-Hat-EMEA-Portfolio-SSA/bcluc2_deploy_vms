@@ -10,12 +10,12 @@
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
         filter_names:
-        - temporary_vm_do_not_delete
+          - _temporary_vm_do_not_delete
 
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
         state: stop
-        vm: "{{ my_vm.value[0].vm }}" 
+        vm: "{{ my_vm.value[0].vm }}"
 
     - name: Delete VM
       vmware.vmware_rest.vcenter_vm:

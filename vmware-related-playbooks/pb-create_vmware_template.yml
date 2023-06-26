@@ -3,7 +3,7 @@
 # The aim of this playbook is to create a VMware template out of an custom RHEL ISO image.
 # We need to follow several steps before we can achieve that:
 #   1. Boot a VM from a iso image in cdrom (that iso needs to be configured to run unattended installation, typically using kickstart)
-#   2. Optional: access to the VM and apply changes, maybe we want to install some packages or apply some configuration
+#   2. Not implemented yet: install VMtools
 #   3. Poweroff virtual machine (thoretically there is no need but it's safer and consume less CPU/memory when taking the snapshot)
 #   4. Create template from virtual machine
 #
@@ -17,13 +17,9 @@
   tasks:
 
     - name: Get id of child folder
+      register: my_folder
       vmware.vmware_rest.vcenter_folder_info:
         parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads') }}"
-      register: my_folder
-
-    - name: Show list of child folders
-      ansible.builtin.debug:
-        var: my_folder.value[0].folder
 
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
@@ -31,7 +27,7 @@
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           datastore: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
           folder: "{{ my_folder.value[0].folder }}"
-        name: temporary_vm_do_not_delete
+        name: _temporary_vm_do_not_delete
         guest_OS: RHEL_9_64
         power_on: true
         hardware_version: VMX_19
@@ -60,11 +56,11 @@
               type: DISTRIBUTED_PORTGROUP
               network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
 
-    - name: Look up the VM called test_vm1 in the inventory
+    - name: Look for MOID of VM called _temporary_vm_do_not_delete
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
         filter_names:
-        - temporary_vm_do_not_delete
+          - _temporary_vm_do_not_delete
 
     - name: Power on VM
       vmware.vmware_rest.vcenter_vm_power:
@@ -73,7 +69,7 @@
 
     - name: Sleep for 10 minutes so the machine can finish the install
       ansible.builtin.wait_for:
-        timeout: 1 #changed to one temporarily for testing,should be 600
+        timeout: 1 # 600
 
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
@@ -85,10 +81,6 @@
         vm: '{{ my_vm.value[0].vm }}'
       register: cdrom_guest
 
-    - name: get info of cdrom
-      debug:
-        var: cdrom_guest
-
     - name: Detach CDROM from VM
       vmware.vmware_rest.vcenter_vm_hardware_cdrom:
         vm: '{{ my_vm.value[0].vm }}'
@@ -96,9 +88,8 @@
         state: absent
 
     - name: Create a content library based on a DataStore
-      register: my_content_library
       vmware.vmware_rest.content_locallibrary:
-        name: this-is-just-a-test #my_library_on_datastore
+        name: "{{ my_content_library_name }}"
         description: automated
         publish_info:
           published: true
@@ -107,21 +98,19 @@
           - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
             type: DATASTORE
         state: present
-    
-    - debug:
-        var: my_content_library.id
 
     - name: List all Local Content Library
-      vmware.vmware_rest.content_locallibrary_info:
       register: all_content_libraries
+      vmware.vmware_rest.content_locallibrary_info:
 
-    - debug:
-        var: all_content_libraries.value
+    - name: Filter out content library id
+      ansible.builtin.set_fact:
+        my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
 
     - name: Create a template from VM in the library
       vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
-        name: rhel-template
-        library: '{{ my_content_library.id }}'
+        name: "{{ my_template_name }}"
+        library: '{{ my_content_library[0].id }}'
         source_vm: '{{ my_vm.value[0].vm }}'
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"

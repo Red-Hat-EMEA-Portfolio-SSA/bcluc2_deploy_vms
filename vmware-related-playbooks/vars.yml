@@ -9,14 +9,8 @@ my_vcenter_virtual_switch_name: vmc-hostswitch
 my_vcenter_port_segment_name: segment-sandbox-6kmgg
 my_vcenter_vm_parent_folder_name: Workloads
 my_vcenter_vm_child_folder_name: sandbox-6kmgg
-my_content_library_name: ISOs_Templates
-
-#Vars related to VMware cluster:
-
-#my_vmware_cluster: domain-c43
-#my_vmware_datastore: datastore-48
-#my_vmware_folder: group-v15611 #group-s6
-#my_vmware_resource_pool: rp1
+my_content_library_name: my_library_on_datastore
+my_template_name: ejemplo-template
 
 #Vars related to the template
 
@@ -24,6 +18,3 @@ my_template_cpu_count: 2
 my_template_memory_mib: 4096
 my_template_disk_capacity_gb: 50
 my_iso_file_path: "[WorkloadDatastore] d15d9964-8b51-3f46-3c39-02f3b810c191/rhel-9.2-x86_64-dvd.iso"
-
-
-#my_template_disk_capacity_bytes: '{{ my_template_disk_capacity_gb | human_to_bytes(default_unit="G") }}'
