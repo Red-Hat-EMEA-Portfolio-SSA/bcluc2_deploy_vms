@@ -108,12 +108,10 @@
       ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads/sandbox-6kmgg') }}"
 
     - name: Get id of child folder
-      tags: caca
       vmware.vmware_rest.vcenter_folder_info:
         parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_vm_parent_folder_name }}') }}"
       register: my_folder
 
     - name: Show list of child folders
-      tags: caca
       ansible.builtin.debug:
         var: my_folder.value[0].folder

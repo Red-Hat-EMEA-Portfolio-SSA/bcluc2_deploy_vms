@@ -9,6 +9,7 @@ my_vcenter_virtual_switch_name: vmc-hostswitch
 my_vcenter_port_segment_name: segment-sandbox-6kmgg
 my_vcenter_vm_parent_folder_name: Workloads
 my_vcenter_vm_child_folder_name: sandbox-6kmgg
+my_content_library_name: ISOs_Templates
 
 #Vars related to VMware cluster:
 

@@ -1,7 +1,8 @@
 ---
 - name: Playbook to create a VMware template from a custom iso image
   hosts: localhost
-  become: true
+  become: false
+  gather_facts: false
 
   tasks:
 
@@ -11,7 +12,7 @@
         filter_names:
         - temporary_vm_do_not_delete
 
-    - name: Turn the power of the VM on
+    - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
         state: stop
         vm: "{{ my_vm.value[0].vm }}" 
