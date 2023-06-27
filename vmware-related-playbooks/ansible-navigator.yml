@@ -1,0 +1,14 @@
+ansible-navigator:
+  execution-environment:
+    pull:
+      policy: missing
+    image: ghcr.io/red-hat-emea-portfolio-ssa/bcl_use_case2:vmware_rest_ee
+    environment-variables:
+      pass:
+        - VMWARE_HOST 
+        - VMWARE_USER
+        - VMWARE_PASSWORD
+        - VMWARE_VALIDATE_CERTS
+  playbook-artifact:
+    enable: false
+  mode: stdout

@@ -1,0 +1,68 @@
+---
+- name: Playbook to create a VMware vm from a custom template
+  hosts: localhost
+  become: false
+  gather_facts: false
+
+  tasks:
+
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads') }}"
+      register: my_folder
+
+    - name: Get all Local Content Library
+      vmware.vmware_rest.content_locallibrary_info:
+      register: all_content_libraries
+
+    - name: Show details of content libraries
+      ansible.builtin.debug:
+        var: all_content_libraries.value
+
+    - name: Filter our content library
+      ansible.builtin.set_fact:
+        my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
+
+    - name: Show MoID of our content library my_content_library[0].id
+      ansible.builtin.debug:
+        var: my_content_library[0].id
+
+    - name: Show MoID of our content library my_content_library.id
+      ansible.builtin.debug:
+        var: my_content_library.id
+
+    - name: Get the list of items of the library
+      register: lib_items
+      vmware.vmware_rest.content_library_item_info:
+        library_id: '{{ my_content_library[0].id }}'
+
+    - name: Show every item in our librery
+      ansible.builtin.debug:
+        var: lib_items
+
+    - name: Use the name to identify the item
+      ansible.builtin.set_fact:
+        my_template_item: "{{ lib_items.value | selectattr('name', 'equalto', my_template_name) | first }}"
+
+    - name: Show MoID of template my_template_item
+      ansible.builtin.debug:
+        var: my_template_item
+
+    - name: Show MoID of template my_template_item.id
+      ansible.builtin.debug:
+        var: my_template_item.id
+
+    - name: Show MoID of template my_template_item[0].id
+      ansible.builtin.debug:
+        var: my_template_item[0].id
+
+    - name: Deploy a new VM based on the template
+      vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
+        name: vm-from-template
+        library: '{{ my_content_library[0].id }}'
+        template_library_item: '{{ my_template_item.id }}'
+        placement:
+          cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+          datastore: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+          folder: "{{ my_folder.value[0].folder }}"
+        state: deploy

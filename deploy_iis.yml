@@ -1,0 +1,45 @@
+- name: Deploy IIS to Windows Server
+  hosts: windows_server
+  tasks:
+    - name: Install IIS
+      ansible.windows.win_feature:
+        name: "Web-Server"
+        state: present
+        restart: true
+        include_sub_features: true
+        include_management_tools: true
+
+    - name: Firewall rule to allow http on TCP port 80
+      community.windows.win_firewall_rule:
+        name: http
+        enable: true
+        state: present
+        localport: 80
+        action: allow
+        direction: In
+        protocol: TCP
+
+    - name: Firewall rule to allow http on TCP port 80
+      community.windows.win_firewall_rule:
+        name: https
+        enable: true
+        state: present
+        localport: 443
+        action: allow
+        direction: In
+        protocol: TCP
+
+    - name: Create assets folder
+      ansible.windows.win_file:
+        path: C:\\inetpub\\wwwroot\\assets
+        state: directory
+
+    - name: Copy logo to assets
+      ansible.windows.win_copy:
+        src: files/logo.png
+        dest: C:\\inetpub\\wwwroot\\assets\\
+
+    - name: Copy index text page
+      ansible.windows.win_template:
+        src: "index.html.j2"
+        dest: "C:\\inetpub\\wwwroot\\index.html"
