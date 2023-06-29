@@ -1,0 +1,16 @@
+---
+# tasks file for deploy-web-server
+
+- name: Deploy RHEL web server
+  when:
+    - ansible_facts['system'] == "Linux"
+    - ansible_facts['os_family'] == "RedHat"
+  ansible.builtin.include_tasks:
+    file: deploy_webserver.yml
+
+- name: Deploy Windows web server (IIS)
+  when:
+    - ansible_facts['system'] == "Win32NT"
+    - ansible_facts['os_family'] == "Windows"
+  ansible.builtin.include_tasks:
+    file: deploy_iis.yml

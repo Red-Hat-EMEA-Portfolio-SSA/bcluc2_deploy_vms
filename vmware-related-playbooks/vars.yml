@@ -2,15 +2,15 @@
 
 #Vars created by VMware admin
 
-my_vcenter_datacenter_name: SDDC-Datacenter
-my_vcenter_cluster_name: Cluster-1
-my_vcenter_datastore_name: WorkloadDatastore
-my_vcenter_virtual_switch_name: vmc-hostswitch
-my_vcenter_port_segment_name: segment-sandbox-6kmgg
-my_vcenter_vm_parent_folder_name: Workloads
+my_vcenter_datacenter_name: SDDC-Datacenter # already in place
+my_vcenter_cluster_name: Cluster-1 # already in place
+my_vcenter_datastore_name: WorkloadDatastore # already in place
+my_vcenter_virtual_switch_name: vmc-hostswitch # already in place
+my_vcenter_port_segment_name: segment-sandbox-6kmgg # already in place
+my_vcenter_vm_parent_folder_name: Workloads # create?
 my_vcenter_vm_child_folder_name: sandbox-6kmgg
-my_content_library_name: my_library_on_datastore
-my_template_name: ejemplo-template
+my_content_library_name: my_library_on_datastore # create
+my_template_name: ejemplo-template # create
 
 #Vars related to the template
 
