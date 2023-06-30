@@ -1,0 +1,68 @@
+---
+- name: Mount installation ISO read-only
+  become: true
+  ansible.builtin.mount:
+    path: "{{ my_mnt_dir }}"
+    src: "{{ my_original_iso_full_path }}"
+    fstype: udf
+    opts: ro
+    state: mounted
+
+- name: Create a working directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ my_working_dir }}"
+    state: directory
+
+- name: Copy ISO content to working directory
+  become: true
+  ansible.builtin.copy:
+    src: "{{ my_mnt_dir }}/"
+    dest: "{{ my_working_dir }}/"
+    remote_src: true
+
+- name: Unmount original ISO
+  become: true
+  ansible.builtin.mount:
+    path: "{{ my_mnt_dir }}"
+    state: unmounted
+
+- name: Create autounattend.xml file from template
+  become: true
+  ansible.builtin.template:
+    src: autounattend.xml.j2
+    dest: "{{ my_working_dir }}/autounattend.xml"
+
+- name: debug
+  ansible.builtin.debug:
+    msg: genisoimage -allow-limited-size -no-emul-boot -b boot/etfsboot.com   -boot-load-seg 0x07C0 -boot-load-size 8  -lJR -o {{ my_custom_iso }} {{ my_working_dir }}/
+
+- name: Create customized Windows iso image
+  become: true
+  ansible.builtin.shell: |
+    mkisofs \
+    -iso-level 4 \
+    -l \
+    -R \
+    -D \
+    -b boot/etfsboot.com \
+    -no-emul-boot \
+    -boot-load-size 8 \
+    -hide boot.catalog \
+    -eltorito-alt-boot \
+    -eltorito-platform efi \
+    -no-emul-boot \
+    -b efi/microsoft/boot/efisys.bin \
+    -o /home/preciado/win-outputimage.iso \
+    {{ my_working_dir }}
+  # genisoimage -no-emul-boot -b boot/etfsboot.com -boot-load-size 8 -lJR -allow-limited-size -o {{ my_custom_iso }} {{ my_working_dir }}/
+  # mkisofs -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WINSP" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
+  # genisoimage -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WIN_SRV_STD_2016" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
+
+
+# - name: Create an Windows ISO file
+#  community.general.iso_create:
+#    src_files:
+#      - "{{ my_working_dir }}/autounattend.xml"
+#    dest_iso: "{{ my_custom_iso }}"
+#    interchange_level: 3
+#    joliet: 3

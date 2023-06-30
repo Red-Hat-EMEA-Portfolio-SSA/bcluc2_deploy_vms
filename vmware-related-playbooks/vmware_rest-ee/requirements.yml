@@ -1,3 +1,5 @@
 ---
 collections:
   - name: vmware.vmware_rest
+  - name: community.general
+  - name: ansible.posix
