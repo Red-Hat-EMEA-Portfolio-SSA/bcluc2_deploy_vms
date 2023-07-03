@@ -65,38 +65,15 @@
   args:
     chdir: "{{ my_working_dir }}"
 
+- name: Implant md5 to ISO file
+  become: true
+  ansible.builtin.shell: "implantisomd5 {{ my_custom_iso }}"
 
-# - name: debug
-#   ansible.builtin.debug:
-#     msg: genisoimage -allow-limited-size -no-emul-boot -b boot/etfsboot.com   -boot-load-seg 0x07C0 -boot-load-size 8  -lJR -o {{ my_custom_iso }} {{ my_working_dir }}/
-
-# - name: Create customized Windows iso image
-#   become: true
-#   ansible.builtin.shell: |
-#     mkisofs \
-#     -iso-level 4 \
-#     -l \
-#     -R \
-#     -D \
-#     -b boot/etfsboot.com \
-#     -no-emul-boot \
-#     -boot-load-size 8 \
-#     -hide boot.catalog \
-#     -eltorito-alt-boot \
-#     -eltorito-platform efi \
-#     -no-emul-boot \
-#     -b efi/microsoft/boot/efisys.bin \
-#     -o /home/preciado/win-outputimage.iso \
-#     {{ my_working_dir }}
-  # genisoimage -no-emul-boot -b boot/etfsboot.com -boot-load-size 8 -lJR -allow-limited-size -o {{ my_custom_iso }} {{ my_working_dir }}/
-  # mkisofs -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WINSP" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
-  # genisoimage -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WIN_SRV_STD_2016" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
-
-
-# - name: Create an Windows ISO file
-#  community.general.iso_create:
-#    src_files:
-#      - "{{ my_working_dir }}/autounattend.xml"
-#    dest_iso: "{{ my_custom_iso }}"
-#    interchange_level: 3
-#    joliet: 3
+- name: Remove workingdir with ISO content
+  become: true
+  loop:
+    - "{{ my_working_dir }}"
+    - "{{ my_mnt_dir }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
