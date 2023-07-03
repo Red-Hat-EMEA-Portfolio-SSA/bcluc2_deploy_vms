@@ -60,7 +60,7 @@
 - name: Generate ISO from the 'windows_iso' directory
   ansible.builtin.command: >
     genisoimage -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8
-    -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" -allow-limited-size
+    -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" 
     -boot-load-size 1 -iso-level 4 -o {{ my_custom_iso }} .
   args:
     chdir: "{{ my_working_dir }}"
