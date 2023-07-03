@@ -14,7 +14,6 @@
     state: directory
 
 - name: Copy ISO content to working directory
-  become: true
   ansible.builtin.copy:
     src: "{{ my_mnt_dir }}/"
     dest: "{{ my_working_dir }}/"
@@ -33,10 +32,10 @@
 #     src: autounattend.xml.j2
 #     dest: "{{ my_working_dir }}/autounattend.xml"
 
-- name: Create autounattend.xml file from template
+- name: Copy autounattend.xml file from role
   become: true
-  ansible.builtin.file:
-    src: autounattend.xml
+  ansible.builtin.copy:
+    src: files/autounattend.xml
     dest: "{{ my_working_dir }}/autounattend.xml"
 
 - name: Remove unnecessary files
@@ -49,6 +48,7 @@
 
 - name: Rename files
   ansible.builtin.copy:
+    remote_src: true
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   loop:
