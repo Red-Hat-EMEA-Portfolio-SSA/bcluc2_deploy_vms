@@ -1,0 +1,87 @@
+---
+- name: Windows ISO Setup
+  hosts: localhost
+  vars:
+    windows_iso_url: "https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66749/17763.3650.221105-1748.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
+  tasks:
+    - name: Define the fact 'workspace'
+      set_fact:
+        workspace: "{{ ansible_env.HOME }}"
+
+    - name: Download Windows ISO
+      get_url:
+        url: "{{ windows_iso_url }}"
+        dest: "{{ workspace }}/windows-server.iso"
+
+    - name: Create 'windows_iso' directory in the root directory
+      file:
+        path: /windows_iso
+        state: directory
+        owner: root
+        group: root
+        mode: '0777'
+      become: true
+
+    - name: Mount the ISO file in the 'windows_iso' directory
+      mount:
+        path: /windows_iso
+        src: "{{ workspace }}/windows-server.iso"
+        fstype: udf
+        opts: ro
+        state: mounted
+      become: true
+
+    - name: Create 'windows_iso' folder in the 'workspace' directory
+      file:
+        path: "{{ workspace }}/windows_iso"
+        state: directory
+        mode: "0755"
+
+    - name: Copy ISO content to 'windows_iso' folder in the 'workspace' directory
+      synchronize:
+        src: /windows_iso/
+        dest: "{{ workspace }}/windows_iso/"
+
+    - name: Mount the ISO file in the 'windows_iso' directory
+      mount:
+        path: /windows_iso
+        state: unmounted
+      become: true
+
+    - name: Create 'windows_iso' folder in the 'workspace' directory
+      ansible.builtin.file:
+        path: "{{ workspace }}/windows_iso"
+        state: directory
+        mode: "0755"
+        recurse: true
+
+    - name: Copy 'autounattend.xml' to the 'windows_iso' folder in the 'workspace' directory
+      ansible.builtin.copy:
+        src: files/autounattend.xml
+        dest: "{{ workspace }}/windows_iso/"
+
+    - name: Remove unnecessary files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ workspace }}/windows_iso/efi/microsoft/boot/efisys.bin"
+        - "{{ workspace }}/windows_iso/efi/microsoft/boot/cdboot.efi"
+
+    - name: Rename files
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - src: "{{ workspace }}/windows_iso/efi/microsoft/boot/efisys_noprompt.bin"
+          dest: "{{ workspace }}/windows_iso/efi/microsoft/boot/efisys.bin"
+        - src: "{{ workspace }}/windows_iso/efi/microsoft/boot/cdboot_noprompt.efi"
+          dest: "{{ workspace }}/windows_iso/efi/microsoft/boot/cdboot.efi"
+
+    - name: Generate ISO from the 'windows_iso' directory
+      ansible.builtin.command: >
+        genisoimage -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8
+        -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" -allow-limited-size
+        -boot-load-size 1 -iso-level 4 -o "{{ workspace }}/windows-unattended.iso" .
+      args:
+        chdir: "{{ workspace }}/windows_iso"

@@ -19,6 +19,7 @@
     src: "{{ my_mnt_dir }}/"
     dest: "{{ my_working_dir }}/"
     remote_src: true
+    mode: "0755"
 
 - name: Unmount original ISO
   become: true
@@ -26,34 +27,67 @@
     path: "{{ my_mnt_dir }}"
     state: unmounted
 
+# - name: Create autounattend.xml file from template
+#   become: true
+#   ansible.builtin.template:
+#     src: autounattend.xml.j2
+#     dest: "{{ my_working_dir }}/autounattend.xml"
+
 - name: Create autounattend.xml file from template
   become: true
-  ansible.builtin.template:
-    src: autounattend.xml.j2
+  ansible.builtin.file:
+    src: autounattend.xml
     dest: "{{ my_working_dir }}/autounattend.xml"
 
-- name: debug
-  ansible.builtin.debug:
-    msg: genisoimage -allow-limited-size -no-emul-boot -b boot/etfsboot.com   -boot-load-seg 0x07C0 -boot-load-size 8  -lJR -o {{ my_custom_iso }} {{ my_working_dir }}/
+- name: Remove unnecessary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ my_working_dir }}/efi/microsoft/boot/efisys.bin"
+    - "{{ my_working_dir }}/efi/microsoft/boot/cdboot.efi"
 
-- name: Create customized Windows iso image
-  become: true
-  ansible.builtin.shell: |
-    mkisofs \
-    -iso-level 4 \
-    -l \
-    -R \
-    -D \
-    -b boot/etfsboot.com \
-    -no-emul-boot \
-    -boot-load-size 8 \
-    -hide boot.catalog \
-    -eltorito-alt-boot \
-    -eltorito-platform efi \
-    -no-emul-boot \
-    -b efi/microsoft/boot/efisys.bin \
-    -o /home/preciado/win-outputimage.iso \
-    {{ my_working_dir }}
+- name: Rename files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: "{{ my_working_dir }}/efi/microsoft/boot/efisys_noprompt.bin"
+      dest: "{{ my_working_dir }}/efi/microsoft/boot/efisys.bin"
+    - src: "{{ my_working_dir }}/efi/microsoft/boot/cdboot_noprompt.efi"
+      dest: "{{ my_working_dir }}/efi/microsoft/boot/cdboot.efi"
+
+- name: Generate ISO from the 'windows_iso' directory
+  ansible.builtin.command: >
+    genisoimage -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8
+    -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" -allow-limited-size
+    -boot-load-size 1 -iso-level 4 -o {{ my_custom_iso }} .
+  args:
+    chdir: "{{ my_working_dir }}"
+
+
+# - name: debug
+#   ansible.builtin.debug:
+#     msg: genisoimage -allow-limited-size -no-emul-boot -b boot/etfsboot.com   -boot-load-seg 0x07C0 -boot-load-size 8  -lJR -o {{ my_custom_iso }} {{ my_working_dir }}/
+
+# - name: Create customized Windows iso image
+#   become: true
+#   ansible.builtin.shell: |
+#     mkisofs \
+#     -iso-level 4 \
+#     -l \
+#     -R \
+#     -D \
+#     -b boot/etfsboot.com \
+#     -no-emul-boot \
+#     -boot-load-size 8 \
+#     -hide boot.catalog \
+#     -eltorito-alt-boot \
+#     -eltorito-platform efi \
+#     -no-emul-boot \
+#     -b efi/microsoft/boot/efisys.bin \
+#     -o /home/preciado/win-outputimage.iso \
+#     {{ my_working_dir }}
   # genisoimage -no-emul-boot -b boot/etfsboot.com -boot-load-size 8 -lJR -allow-limited-size -o {{ my_custom_iso }} {{ my_working_dir }}/
   # mkisofs -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WINSP" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
   # genisoimage -b boot/etfsboot.com -no-emul-boot -boot-load-seg 1984 -boot-load-size 8 -iso-level 2 -J -l -D -N -joliet-long -allow-limited-size -relaxed-filenames -V "WIN_SRV_STD_2016" -o "{{ my_custom_iso }}" "{{ my_working_dir }}"
