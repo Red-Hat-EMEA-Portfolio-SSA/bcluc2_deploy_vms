@@ -16,9 +16,6 @@
 
   tasks:
 
-    - ansible.builtin.debug:
-        msg: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}') }}"
-
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
@@ -50,7 +47,8 @@
             new_vmdk:
               capacity: '{{ my_template_disk_capacity_gb | human_to_bytes(default_unit="G") }}'
         nics:
-          - backing:
+          - start_connected: true
+            backing:
               type: STANDARD_PORTGROUP # DISTRIBUTED_PORTGROUP
               network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}') }}"
 
