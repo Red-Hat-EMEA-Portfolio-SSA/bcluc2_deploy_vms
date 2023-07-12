@@ -1,6 +1,4 @@
 vmware-related-playbooks/vmware_rest-ee/context/
+execution-environment/context
 *.log
-my-test.yml
-my-test-webserver.yml
-inventory-webservers
-key.pub
+old-stuff

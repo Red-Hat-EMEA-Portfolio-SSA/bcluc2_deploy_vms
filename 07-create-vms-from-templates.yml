@@ -4,6 +4,26 @@
   become: false
   gather_facts: false
 
+  vars:
+
+    my_vms_from_template:
+      - name: windows-from-tmplt-1
+        vcpu: 4
+        vmem_MB: 8000
+        template: custom-windows19-template
+      - name: windows-from-tmplt-2
+        vcpu: 2
+        vmem_MB: 4000
+        template: custom-windows19-template
+      - name: rhel92-from-tmplt-1
+        vcpu: 4
+        vmem_MB: 8000
+        template: custom-rhel92-template
+      - name: rhel92-from-tmplt-2
+        vcpu: 2
+        vmem_MB: 4000
+        template: custom-rhel92-template
+
   tasks:
 
     - name: Get all Local Content Library

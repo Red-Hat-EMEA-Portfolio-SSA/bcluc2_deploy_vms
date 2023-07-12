@@ -1,0 +1,7 @@
+---
+- name: Deploy webservers in inventory (RHEL and/or Windows)
+  hosts: webservers
+  gather_facts: true
+
+  roles:
+    - deploy-web-server

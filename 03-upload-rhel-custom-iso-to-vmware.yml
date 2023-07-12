@@ -2,15 +2,13 @@
 - name: Upload ISO files to DataStore
   hosts: bastion
   become: false
-  
+
   vars:
-    
+
     my_source_file_full_path: "/home/root/custom-rhel92.iso"
     my_vcenter_datacenter_name: bcl
     my_datastore_name: datastore1
     my_destination_path: "ISO Files"
-
-
 
   tasks:
 
