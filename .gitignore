@@ -3,3 +3,4 @@ vmware-related-playbooks/vmware_rest-ee/context/
 my-test.yml
 my-test-webserver.yml
 inventory-webservers
+key.pub

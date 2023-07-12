@@ -49,8 +49,8 @@
         nics:
           - start_connected: true
             backing:
-              type: STANDARD_PORTGROUP # DISTRIBUTED_PORTGROUP
-              network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}') }}"
+              type: DISTRIBUTED_PORTGROUP # STANDARD_PORTGROUP
+              network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
 
     - name: Look for MOID of VM called _temporary_vm_do_not_delete
       register: my_vm
