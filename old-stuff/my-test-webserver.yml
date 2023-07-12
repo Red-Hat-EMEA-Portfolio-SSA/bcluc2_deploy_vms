@@ -1,0 +1,7 @@
+---
+- name: Example playbook for generating new Windows custom iso
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - deploy-web-server

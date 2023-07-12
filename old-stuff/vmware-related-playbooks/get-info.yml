@@ -1,0 +1,117 @@
+########################################################################
+#
+# The aim of this playbook is to create a VMware template out of an custom RHEL ISO image.
+# We need to follow several steps before we can achieve that:
+#   1. Boot a VM from a iso image in cdrom (that iso needs to be configured to run unattended installation, typically using kickstart)
+#   2. Optional: access to the VM and apply changes, maybe we want to install some packages or apply some configuration
+#   3. Poweroff virtual machine (thoretically there is no need but it's safer and consume less CPU/memory when taking the snapshot)
+#   4. Create template from virtual machine
+#
+########################################################################
+---
+- name: Playbook to create a VMware template from a custom iso image
+  hosts: localhost
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Get DS folder
+      vmware.vmware_rest.vcenter_folder_info:
+        #folders: group-s6
+        #names: WorkloadDatastore
+        type: "DATASTORE"
+      register: my_ds_folder
+
+    - name: Show list of DS folders
+      ansible.builtin.debug:
+        var: my_ds_folder
+
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: group-v47
+      register: my_folder
+
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: my_folder
+
+    - name: Build a list of all the clusters
+      vmware.vmware_rest.vcenter_cluster_info:
+      register: all_the_clusters
+
+    - name: Show list of clusters
+      ansible.builtin.debug:
+        var: all_the_clusters
+
+    - name: Build a list of all the datastores
+      vmware.vmware_rest.vcenter_datastore_info:
+        names: WorkloadDatastore
+      register: all_the_datastores
+
+    - name: Show list of datastores
+      ansible.builtin.debug:
+        var: all_the_datastores
+
+    - name: Look up the VM called test_vm1 in the inventory
+      register: my_vm
+      vmware.vmware_rest.vcenter_vm_info:
+        filter_names:
+        - bastion #temporary_vm_do_not_delete
+
+    - name: Show my_vm
+      ansible.builtin.debug:
+        var: my_vm.value
+
+    - name: Collect information about a specific VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ my_vm.value[0].vm }}'
+      register: test_vm1_info
+
+    - name: Show my_vm
+      ansible.builtin.debug:
+        var: test_vm1_info
+
+    - name: Get the dvswitch called my-portgroup
+      vmware.vmware_rest.vcenter_network_info:
+        filter_types: DISTRIBUTED_PORTGROUP
+        #filter_names: my portrgoup
+      register: my_portgroup
+
+    - name: Show distributed port groups
+      ansible.builtin.debug:
+        var: my_portgroup
+
+    - name: Get DS folder
+      vmware.vmware_rest.vcenter_folder_info:
+        #folders: group-s6
+        #names: WorkloadDatastore
+        type: "DATASTORE"
+      register: my_ds_folder
+
+    - name: Show list of DS folders
+      ansible.builtin.debug:
+        var: my_ds_folder
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug:
+        msg: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
+
+    - name: lookup MoID of the object
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+
+
+    - name: lookup MoID of the object inside the path
+      ansible.builtin.debug: msg="{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/Workloads/sandbox-6kmgg') }}"
+
+    - name: Get id of child folder
+      vmware.vmware_rest.vcenter_folder_info:
+        parent_folders: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_vm_parent_folder_name }}') }}"
+      register: my_folder
+
+    - name: Show list of child folders
+      ansible.builtin.debug:
+        var: my_folder.value[0].folder

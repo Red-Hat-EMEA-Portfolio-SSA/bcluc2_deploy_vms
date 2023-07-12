@@ -1,0 +1,17 @@
+---
+- name: Example playbook for generating new Windows custom iso
+  hosts: target1
+  become: true
+  gather_facts: false
+
+  vars:
+    # Directories and files
+    my_original_iso_full_path: /home/preciado/window2019.iso
+    my_custom_iso: /home/preciado/my_windows_custom.iso
+    my_working_dir: /tmp/working-dir
+    my_mnt_dir: /tmp/mnt-dir
+    my_os_type: "Windows"
+
+
+  roles:
+    - custom-iso-role
