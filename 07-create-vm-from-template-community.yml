@@ -5,7 +5,7 @@
   gather_facts: false
 
   tasks:
-  - name: ver parámetros
+  - name: ver parametros
     debug:
       msg: 'Nombre de máquina {{ item.name }} fichero de definiciones machines_def_{{ type }}.yml'
     loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
