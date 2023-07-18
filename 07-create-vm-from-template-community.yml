@@ -7,7 +7,7 @@
   tasks:
   - name: ver parametros
     ansible.builtin.debug:
-      msg: 'Nombre de máquina {{ item.name }} fichero de definiciones machines_def_{{ type }}.yml'
+      msg: 'Nombre de máquina {{ item.my_vcenter_vm_name }} fichero de definiciones machines_def_{{ type }}.yml'
     loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
   
   - name: Clone the template
