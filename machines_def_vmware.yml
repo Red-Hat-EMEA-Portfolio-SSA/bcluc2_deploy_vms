@@ -1,4 +1,16 @@
 ---
 - my_vcenter_vm_name: mafalda
+  my_template_name: rhel86-tpl
+  my_vcenter_datacenter_name: SDDC-Datacenter
+  my_vcenter_vm_parent_folder_name: /Workloads/sandbox-2lqrd
+  my_vcenter_cluster_name: Cluster-1
 - my_vcenter_vm_name: asterix
+  my_template_name: rhel86-tpl
+  my_vcenter_datacenter_name: SDDC-Datacenter
+  my_vcenter_vm_parent_folder_name: /Workloads/sandbox-2lqrd
+  my_vcenter_cluster_name: Cluster-1
 - my_vcenter_vm_name: obelix
+  my_template_name: rhel86-tpl
+  my_vcenter_datacenter_name: SDDC-Datacenter
+  my_vcenter_vm_parent_folder_name: /Workloads/sandbox-2lqrd
+  my_vcenter_cluster_name: Cluster-1
