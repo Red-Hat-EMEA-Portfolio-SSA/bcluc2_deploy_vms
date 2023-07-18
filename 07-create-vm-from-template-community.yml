@@ -11,11 +11,11 @@
       username: "{{ lookup('env', 'VMWARE_USER') }}"
       password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
       validate_certs: False
-      name: "{{ my_vcenter_vm_name }}"
-      template: "{{ my_template_name }}"
-      datacenter: "{{ my_vcenter_datacenter_name }}"
-      folder: "{{ my_vcenter_vm_parent_folder_name }}"
+      name: "{{ item.my_vcenter_vm_name }}"
+      template: "{{ item.my_template_name }}"
+      datacenter: "{{ item.my_vcenter_datacenter_name }}"
+      folder: "{{ item.my_vcenter_vm_parent_folder_name }}"
       state: poweredon
-      cluster: "{{ my_vcenter_cluster_name }}"
+      cluster: "{{ item.my_vcenter_cluster_name }}"
       wait_for_ip_address: yes
     loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
