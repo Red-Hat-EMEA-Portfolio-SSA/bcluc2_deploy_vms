@@ -1,0 +1,20 @@
+---
+- name: Playbook to create a VMware vm from a custom template
+  hosts: localhost
+  become: false
+  gather_facts: false
+
+  tasks:
+  - name: Clone the template
+    community.vmware.vmware_guest:
+      hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
+      username: "{{ lookup('env', 'VMWARE_USER') }}"
+      password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+      validate_certs: False
+      name: vmware_node
+      template: "{{ my_template_name }}"
+      datacenter: "{{ my_vcenter_datacenter_name }}"
+      folder: "{{ my_vcenter_vm_parent_folder_name }}"
+      state: poweredon
+      cluster: "{{ my_vcenter_cluster_name }}"
+      wait_for_ip_address: yes
