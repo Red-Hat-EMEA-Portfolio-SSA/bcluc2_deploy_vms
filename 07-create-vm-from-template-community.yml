@@ -17,7 +17,7 @@
       password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
       validate_certs: False
       name: "{{ item.my_vcenter_vm_name }}"
-      template: "{{ item.my_vcenter_template_name }}"
+      template: "{{ item.my_template_name }}"
       datacenter: "{{ item.my_vcenter_datacenter_name }}"
       folder: "{{ item.my_vcenter_vm_parent_folder_name }}"
       state: poweredon
