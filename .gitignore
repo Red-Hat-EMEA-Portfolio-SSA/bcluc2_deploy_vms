@@ -2,3 +2,4 @@ vmware-related-playbooks/vmware_rest-ee/context/
 execution-environment/context
 *.log
 key.pub
+env.txt

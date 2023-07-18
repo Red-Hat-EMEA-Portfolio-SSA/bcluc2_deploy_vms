@@ -1,0 +1,4 @@
+---
+- my_vcenter_vm_name: mafalda
+- my_vcenter_vm_name: asterix
+- my_vcenter_vm_name: obelix

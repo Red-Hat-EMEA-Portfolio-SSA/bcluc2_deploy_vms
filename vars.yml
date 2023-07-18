@@ -1,0 +1,20 @@
+#Remember to pass the ENV variables "VMWARE_HOST" and "VMWARE_PASSWORD" to the EE
+
+#Vars created by VMware admin
+
+my_vcenter_datacenter_name: SDDC-Datacenter # already in place
+my_vcenter_cluster_name: Cluster-1 # already in place
+my_vcenter_datastore_name: WorkloadDatastore # already in place
+my_vcenter_virtual_switch_name: vmc-hostswitch # already in place
+my_vcenter_port_segment_name: segment-sandbox-2lqrd # already in place
+my_vcenter_vm_parent_folder_name: /Workloads/sandbox-2lqrd # create?
+my_vcenter_vm_child_folder_name: sandbox-2lqrd
+my_content_library_name: ISOs_Templates # create
+my_template_name: rhel86-tpl # create
+
+#Vars related to the template
+
+my_template_cpu_count: 2
+my_template_memory_mib: 4096
+my_template_disk_capacity_gb: 50
+my_iso_file_path: "[WorkloadDatastore] d15d9964-8b51-3f46-3c39-02f3b810c191/rhel-9.2-x86_64-dvd.iso"

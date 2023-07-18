@@ -18,3 +18,4 @@
       state: poweredon
       cluster: "{{ my_vcenter_cluster_name }}"
       wait_for_ip_address: yes
+    loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
