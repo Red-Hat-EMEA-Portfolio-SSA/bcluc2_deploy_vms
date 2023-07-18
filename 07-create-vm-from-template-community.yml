@@ -11,7 +11,7 @@
       username: "{{ lookup('env', 'VMWARE_USER') }}"
       password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
       validate_certs: False
-      name: vmware_node
+      name: "{{ my_vcenter_vm_name }}"
       template: "{{ my_template_name }}"
       datacenter: "{{ my_vcenter_datacenter_name }}"
       folder: "{{ my_vcenter_vm_parent_folder_name }}"
