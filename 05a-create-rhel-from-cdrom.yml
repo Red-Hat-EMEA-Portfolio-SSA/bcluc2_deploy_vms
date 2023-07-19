@@ -4,6 +4,7 @@
 # We need to follow several steps before we can achieve that:
 #   1. Boot a VM from a iso image in cdrom (that iso needs to be configured to run unattended installation, typically using kickstart)
 #   2. Not implemented yet: install VMtools
+#   2.a seal or sysprep the VM
 #   3. Poweroff virtual machine (thoretically there is no need but it's safer and consume less CPU/memory when taking the snapshot)
 #   4. Create template from virtual machine
 #
@@ -80,14 +81,55 @@
         filter_names:
           - _temporary_vm_do_not_delete
 
+    - name: Print out infos on my_vm
+      debug:
+        var: my_vm
+      when: debug | default ('false') | bool
+
+    - name: Collect information about a specific VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ my_vm.value[0].vm }}'
+      register: my_vm_info
+    
+    - name: Print out infos on my_vm_info
+      debug:
+        var: my_vm_info
+      when: debug | default ('false') | bool
+
     - name: Power on VM
       vmware.vmware_rest.vcenter_vm_power:
         state: start
         vm: "{{ my_vm.value[0].vm }}"
 
-    - name: Sleep for 10 minutes so the machine can finish the install
+    - name: Wait for guest network interfaces information to be available
+      vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
+        vm: '{{ my_vm_info.id }}'
+      register: my_vm_interfaceinfo
+      retries: 60 
+      delay: 10 # seconds
+      until:
+        - my_vm_interfaceinfo.value[0] is defined 
+
+    - name: Print out infos on my_vm_interfaceinfo
+      debug:
+        var: my_vm_interfaceinfo
+      when: debug | default ('false') | bool
+
+    - name: extract ip address
+      ansible.builtin.set_fact:
+        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
+    
+    - name: Print out ip address
+      debug:
+        var: my_vm_ip
+      when: debug | default ('false') | bool
+
+    - name: wait for ssh to be ready
       ansible.builtin.wait_for:
-        timeout: 600
+        port: 22
+        host: "{{ my_vm_ip }}"
+        delay: 10 # seconds
+        timeout: 600 
 
     #- name: Power off VM
     #  vmware.vmware_rest.vcenter_vm_power:
