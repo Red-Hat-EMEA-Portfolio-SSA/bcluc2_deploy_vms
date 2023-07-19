@@ -21,10 +21,8 @@
     my_vcenter_datacenter_name: bcl # already in place
     my_vcenter_cluster_name: bcl-cluster # already in place
     my_vcenter_datastore_name: "datastore1 (1)" # already in place
-    my_vcenter_virtual_switch_name: "DSwitch-test" # vmc-hostswitch # already in place
-    # my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
-    my_vcenter_port_segment_name: "DPortGroup-test" # already in place
-    # my_vcenter_port_segment_name: bcl-wrklds # already in place
+    my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
+    my_vcenter_port_segment_name: bcl-wrklds # already in place
     my_vcenter_folder_name: vms # create?
     # my_vcenter_vm_parent_folder_name: vms # create?
     # my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
