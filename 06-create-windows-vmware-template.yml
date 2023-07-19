@@ -21,8 +21,10 @@
     my_vcenter_datacenter_name: bcl # already in place
     my_vcenter_cluster_name: bcl-cluster # already in place
     my_vcenter_datastore_name: "datastore1 (1)" # already in place
-    my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
-    my_vcenter_port_segment_name: bcl-wrklds # already in place
+    my_vcenter_virtual_switch_name: "DSwitch-test" # vmc-hostswitch # already in place
+    # my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
+    my_vcenter_port_segment_name: "DPortGroup-test" # already in place
+    # my_vcenter_port_segment_name: bcl-wrklds # already in place
     my_vcenter_folder_name: vms # create?
     # my_vcenter_vm_parent_folder_name: vms # create?
     # my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
@@ -44,8 +46,8 @@
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           datastore: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
-        name: _temporary_vm_do_not_delete
-        guest_OS: RHEL_9_64
+        name: _temporary_winvm_do_not_delete
+        guest_OS: WINDOWS_SERVER_2019
         power_on: true
         hardware_version: VMX_19
         cpu:
@@ -74,25 +76,76 @@
               type: DISTRIBUTED_PORTGROUP # STANDARD_PORTGROUP
               network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
 
-    - name: Look for MOID of VM called _temporary_vm_do_not_delete
+    - name: Look for MOID of VM called _temporary_winvm_do_not_delete
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
         filter_names:
-          - _temporary_vm_do_not_delete
+          - _temporary_winvm_do_not_delete
+
+    - name: Collect information about a specific VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ my_vm.value[0].vm }}'
+      register: my_vm_info
+    
+    - name: Print out infos on my_vm_info
+      debug:
+        var: my_vm_info
+      when: debug | default ('false') | bool
 
     - name: Power on VM
       vmware.vmware_rest.vcenter_vm_power:
         state: start
         vm: "{{ my_vm.value[0].vm }}"
 
-    - name: Sleep for 10 minutes so the machine can finish the install
-      ansible.builtin.wait_for:
-        timeout: 600
-
-    - name: Power off VM
-      vmware.vmware_rest.vcenter_vm_power:
-        state: stop
+#    - name: Sleep for 10 minutes so the machine can finish the install
+#      ansible.builtin.wait_for:
+#        timeout: 600
+#
+#    - name: Wait for power state to be operations_ready
+#      vmware.vmware_rest.vcenter_vm_guest_power_info:
+#        vm: '{{ my_vm_info.id }}'
+#      register: my_vm_powerstate
+#      retries: 200 
+#      delay: 10 # seconds
+#      until:
+#        - my_vm_powerstate.value is defined
+#        - my_vm_powerstate.value.operations_ready 
+#        - my_vm_powerstate.value.state == "RUNNING" 
+#
+    - name: Update the vm-tools
+      vmware.vmware_rest.vcenter_vm_tools_installer:
         vm: "{{ my_vm.value[0].vm }}"
+        state: connect
+
+    - name: Wait for guest network interfaces information to be available
+      vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
+        vm: '{{ my_vm_info.id }}'
+      register: my_vm_interfaceinfo
+      retries: 60 
+      delay: 10 # seconds
+      until:
+        - my_vm_interfaceinfo.value[0] is defined 
+
+    - name: Print out infos on my_vm_interfaceinfo
+      debug:
+        var: my_vm_interfaceinfo
+      when: debug | default ('false') | bool
+
+    - name: extract ip address
+      ansible.builtin.set_fact:
+        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
+    
+    - name: Print out ip address
+      debug:
+        var: my_vm_ip
+      when: debug | default ('false') | bool
+
+    - name: wait for ssh to be ready
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ my_vm_ip }}"
+        delay: 10 # seconds
+        timeout: 600 
 
     - name: List the cdrom devices on the guest
       vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
@@ -102,8 +155,13 @@
     - name: Detach CDROM from VM
       vmware.vmware_rest.vcenter_vm_hardware_cdrom:
         vm: '{{ my_vm.value[0].vm }}'
-        cdrom: "{{ cdrom_guest.value[0] }}"
+        cdrom: "{{ cdrom_guest.value[0].cdrom }}"
         state: absent
+
+    - name: Power off VM
+      vmware.vmware_rest.vcenter_vm_power:
+        state: stop
+        vm: "{{ my_vm.value[0].vm }}"
 
     - name: Create a content library based on a DataStore
       vmware.vmware_rest.content_locallibrary:
@@ -134,7 +192,7 @@
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
 
-    - name: Delete VM
-      vmware.vmware_rest.vcenter_vm:
-        vm: '{{ my_vm.value[0].vm }}'
-        state: absent
+#    - name: Delete VM
+#      vmware.vmware_rest.vcenter_vm:
+#        vm: '{{ my_vm.value[0].vm }}'
+#        state: absent
