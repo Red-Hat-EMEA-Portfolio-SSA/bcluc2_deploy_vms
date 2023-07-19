@@ -6,6 +6,8 @@
 
   vars:
 
+    my_content_library_name: my_library_on_datastore
+
     my_vms_from_template:
       - name: windows-from-tmplt-1
         vcpu: 4
