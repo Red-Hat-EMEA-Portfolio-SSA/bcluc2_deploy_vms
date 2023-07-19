@@ -22,11 +22,21 @@ export VMWARE_VALIDATE_CERTS=<true-or-false>
 ```
 The ansible-navigator.yml file in this repo is already configured to pass those env variables to your execution environment. This way you don't need to hardcode your passwords.
 
-Remember to modify the vars.yml file with your values and then run the playbook:
+Remember to modify the vars.yml file with your values and then run the playbooks:
 
 ```
-ansible-navigator run pb-create_vmware_template.yml -e @vars.yml
+$ ansible-navigator run 01-create-rhel-custom-iso.yml               -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 02-create-windows-custom-iso.yml            -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 03-upload-rhel-custom-iso-to-vmware.yml     -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 04-upload-windows-custom-iso-to-vmware.yml  -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 05a-create-rhel-from-cdrom.yml              -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 05b-seal-rhel-vm.yml                        -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 05d-create-template.yml                     -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 06-create-windows-vmware-template.yml       -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 07-create-vm-from-template-community.yml    -e @vars.yml --eei bcl-ov:9 -vv
+$ ansible-navigator run 08-deploy-webservers.yml                    -e @vars.yml --eei bcl-ov:9 -vv
 ```
+Do not run: 07-create-vms-from-templates.yml
 
 ## Create a custom execution environment
 
