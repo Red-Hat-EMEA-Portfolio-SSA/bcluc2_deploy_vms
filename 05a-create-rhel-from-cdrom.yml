@@ -45,7 +45,7 @@
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           datastore: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
-        name: _temporary_vm_do_not_delete
+        name: _temporary_rhelvm_do_not_delete
         guest_OS: RHEL_9_64
         power_on: true
         hardware_version: VMX_19
@@ -75,11 +75,11 @@
               type: DISTRIBUTED_PORTGROUP # STANDARD_PORTGROUP
               network: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/{{ my_vcenter_virtual_switch_name }}/{{ my_vcenter_port_segment_name }}') }}"
 
-    - name: Look for MOID of VM called _temporary_vm_do_not_delete
+    - name: Look for MOID of VM called _temporary_rhelvm_do_not_delete
       register: my_vm
       vmware.vmware_rest.vcenter_vm_info:
         filter_names:
-          - _temporary_vm_do_not_delete
+          - _temporary_rhelvm_do_not_delete
 
     - name: Print out infos on my_vm
       debug:
@@ -117,7 +117,7 @@
 
     - name: extract ip address
       ansible.builtin.set_fact:
-        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
+        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
     
     - name: Print out ip address
       debug:
@@ -127,7 +127,7 @@
     - name: wait for ssh to be ready
       ansible.builtin.wait_for:
         port: 22
-        host: "{{ my_vm_ip }}"
+        host: "{{ my_vm_ip }}"
         delay: 10 # seconds
         timeout: 600 
 
