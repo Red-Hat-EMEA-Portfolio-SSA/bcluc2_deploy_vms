@@ -1,13 +1,13 @@
 ---
-- name: Example playbook for generating new Windows custom iso
-  hosts: target1
+- name: Generate new Windows custom ISO file
+  hosts: bastion
   become: true
-  gather_facts: false
+  gather_facts: true
 
   vars:
     # Directories and files
-    my_original_iso_full_path: /home/preciado/window2019.iso
-    my_custom_iso: /home/preciado/my_windows_custom.iso
+    my_original_iso_full_path: "/var/www/html/isos/windows2019.iso"
+    my_custom_iso: "/var/www/html/isos/custom-windows2019.iso"
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir
     my_os_type: "Windows"

@@ -1,5 +1,5 @@
 ---
-- name: Example playbook for generating new RHEL custom iso
+- name: Generate new RHEL custom ISO file
   hosts: bastion
   gather_facts: true
   become: true
@@ -9,8 +9,8 @@
     my_os_type: "RHEL"
 
     # Directories and files
-    my_original_iso_full_path: /ISO-files/rhel-8.5-x86_64-dvd.iso
-    my_custom_iso: /ISO-files/my_custom.iso
+    my_original_iso_full_path: "/var/www/html/isos/rhel-9.2-x86_64-dvd.iso"
+    my_custom_iso: "/var/www/html/isos/custom-rhel92.iso"
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir
 
@@ -30,8 +30,8 @@
     # my_dns_server: 8.8.8.8 # Optional, only to be used if my_network_bootprotocol is "static"
 
     # Optional Red Hat CDN user and password for registering with Insights
-    #my_rhn_user: myuser
-    #my_rhn_pass: mypassword
+    # my_rhn_user: myuser
+    # my_rhn_pass: mypassword
 
     # Optional, users to be created. You can add as many users as you want by growing the dictionary with the same structure
     # Every entry on the dictionary must have "name" and "password" fields, optionally you can define additional groups for

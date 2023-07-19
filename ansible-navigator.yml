@@ -1,3 +1,4 @@
+---
 ansible-navigator:
   ansible:
     inventory:
@@ -6,7 +7,7 @@ ansible-navigator:
   execution-environment:
     pull:
       policy: missing
-    image: ghcr.io/red-hat-emea-portfolio-ssa/bcl_uc2:1  # ghcr.io/red-hat-emea-portfolio-ssa/bcl_use_case2:vmware_rest_ee
+    image: ghcr.io/red-hat-emea-portfolio-ssa/bcl_uc2:5
     environment-variables:
       pass:
         - VMWARE_HOST 

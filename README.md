@@ -38,7 +38,7 @@ pip install ansible-builder
 Navigate to the "execution-environment" directory of this repo and run:
 
 ```
-ansible-builder build -f execution-environment.yml -t bcl_uc2:1 -v 3
+ansible-builder build -f execution-environment.yml -v 3 -t bcl_uc2:5
 ```
 
 We've built our image with community content and uploaded to ghcr.io, but we highly recommend you to build your build your own image with secure and stable content coming from Red Hat subscriptions. Once you've built it change the image reference in ansible-navigator.yml.
@@ -46,5 +46,5 @@ We've built our image with community content and uploaded to ghcr.io, but we hig
 In case you still want to use our unsecure and unstable image you can pull it from:
 
 ```
-podman pull ghcr.io/red-hat-emea-portfolio-ssa/bcl_uc2:1
+podman pull ghcr.io/red-hat-emea-portfolio-ssa/bcl_uc2:5
 ```

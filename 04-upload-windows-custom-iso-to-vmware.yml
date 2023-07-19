@@ -5,10 +5,10 @@
 
   vars:
 
-    my_source_file_full_path: "/var/www/html/isos/windows2019.iso"
-    my_vcenter_datacenter_name: bcl-cluster
-    my_datastore_name: "datastore1 (1)"
-    my_destination_path: "ISO Files/windows19.iso"
+    my_source_file_full_path: "/var/www/html/isos/custom-windows2019.iso"
+    my_vcenter_datacenter_name: "bcl-cluster"
+    my_datastore_name: "datastore1 (2)"
+    my_destination_path: "custom-windows2019.iso"
 
   tasks:
 
@@ -21,4 +21,4 @@
         datacenter: "{{ my_vcenter_datacenter_name }}"
         datastore: "{{ my_datastore_name }}"
         path: "{{ my_destination_path }}"
-      delegate_to: bastion
+      # delegate_to: bastion
