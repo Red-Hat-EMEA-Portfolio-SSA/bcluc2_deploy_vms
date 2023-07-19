@@ -6,9 +6,10 @@
   vars:
 
     my_source_file_full_path: "/var/www/html/isos/custom-windows2019.iso"
-    my_vcenter_datacenter_name: "bcl-cluster"
+    # my_vcenter_datacenter_name: "bcl-cluster"
+    my_vcenter_datacenter_name: "bcl"
     my_datastore_name: "datastore1 (2)"
-    my_destination_path: "custom-windows2019.iso"
+    my_destination_path: "/msifolder/custom-windows2019.iso"
 
   tasks:
 
@@ -17,8 +18,9 @@
         hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
         username: "{{ lookup('env', 'VMWARE_USER') }}"
         password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+        validate_certs: false
         src: "{{ my_source_file_full_path }}"
-        datacenter: "{{ my_vcenter_datacenter_name }}"
-        datastore: "{{ my_datastore_name }}"
+        datacenter: "bcl" # "{{ my_vcenter_datacenter_name }}"
+        datastore: "datastore1 (2)" # "{{ my_datastore_name }}"
         path: "{{ my_destination_path }}"
-      # delegate_to: bastion
+      delegate_to: bastion
