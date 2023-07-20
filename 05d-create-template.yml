@@ -34,10 +34,13 @@
         filter_names:
           - _temporary_vm_do_not_delete
 
-    - name: Power off VM
-      vmware.vmware_rest.vcenter_vm_power:
-        state: stop
-        vm: "{{ my_vm.value[0].vm }}"
+    - name: Collect information about a specific VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ my_vm.value[0].vm }}'
+      register: test_vm1_info
+
+    - debug:
+        msg: "{{ test_vm1_info }}"
 
     - name: List the cdrom devices on the guest
       vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
@@ -45,44 +48,52 @@
       register: cdrom_template_vm
 
     - debug:
-        msg: "{{ cdrom_template_vm.value[0] }}"
+        msg: "{{ cdrom_template_vm }}"
 
-    - name: Detach CDROM from VM
+############################################
+# this task is not working, apparently the cdrom id I'm passing is not the one the module is asking for
+    - name: Delete CDROM from VM
       vmware.vmware_rest.vcenter_vm_hardware_cdrom:
         vm: '{{ my_vm.value[0].vm }}'
         cdrom: "{{ cdrom_template_vm.value[0] }}"
+        start_connected: false
         state: absent
+############################################
+    - name: Power off VM
+      vmware.vmware_rest.vcenter_vm_power:
+        state: stop
+        vm: "{{ my_vm.value[0].vm }}"
 
-#    - name: Create a content library based on a DataStore
-#      vmware.vmware_rest.content_locallibrary:
-#        name: "{{ my_content_library_name }}"
-#        description: automated
-#        publish_info:
-#          published: true
-#          authentication_method: NONE
-#        storage_backings:
-#          - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
-#            type: DATASTORE
-#        state: present
-#
-#    - name: List all Local Content Library
-#      register: all_content_libraries
-#      vmware.vmware_rest.content_locallibrary_info:
-#
-#    - name: Filter out content library id
-#      ansible.builtin.set_fact:
-#        my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
-#
-#    - name: Create a template from VM in the library
-#      vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
-#        name: "{{ my_template_name }}"
-#        library: '{{ my_content_library[0].id }}'
-#        source_vm: '{{ my_vm.value[0].vm }}'
-#        placement:
-#          cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
-#          folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
-#
-#    - name: Delete VM
-#      vmware.vmware_rest.vcenter_vm:
-#        vm: '{{ my_vm.value[0].vm }}'
-#        state: absent
+    - name: Create a content library based on a DataStore
+      vmware.vmware_rest.content_locallibrary:
+        name: "{{ my_content_library_name }}"
+        description: automated
+        publish_info:
+          published: true
+          authentication_method: NONE
+        storage_backings:
+          - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+            type: DATASTORE
+        state: present
+
+    - name: List all Local Content Library
+      register: all_content_libraries
+      vmware.vmware_rest.content_locallibrary_info:
+
+    - name: Filter out content library id
+      ansible.builtin.set_fact:
+        my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
+
+    - name: Create a template from VM in the library
+      vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
+        name: "{{ my_template_name }}"
+        library: '{{ my_content_library[0].id }}'
+        source_vm: '{{ my_vm.value[0].vm }}'
+        placement:
+          cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+          folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
+
+    - name: Delete VM
+      vmware.vmware_rest.vcenter_vm:
+        vm: '{{ my_vm.value[0].vm }}'
+        state: absent
