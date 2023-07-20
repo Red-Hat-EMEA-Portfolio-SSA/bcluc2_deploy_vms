@@ -4,6 +4,8 @@
   gather_facts: true
   become: true
 
+# need to add the logic to include an ssh key OR enable ssh passwordauthentication
+
   vars:
 
     my_os_type: "RHEL"

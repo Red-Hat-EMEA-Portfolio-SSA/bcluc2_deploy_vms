@@ -1,7 +1,7 @@
 ---
 - name: Seal RHEL9 VM
   hosts: filemon
-  become: false
+  become: true
   gather_facts: false
 
   # https://access.redhat.com/solutions/5793031
@@ -21,10 +21,11 @@
         state: latest
 
     - name: Unregister machine
-      ansible.builtin.command: |
-        subscription-manager unregister
-        subscription-manager remove --all
-        subscription-manager clean
+      loop:
+        - "subscription-manager unregister"
+        - "subscription-manager remove --all"
+        - "subscription-manager clean"
+      ansible.builtin.command: "{{ item }}"
 
     - name: Remove UUID from interface configuration
       ansible.builtin.lineinfile:
