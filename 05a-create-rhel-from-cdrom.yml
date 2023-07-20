@@ -18,11 +18,11 @@
 
     # Vars created by VMware admin
 
-    my_vcenter_datacenter_name: bcl # already in place
-    my_vcenter_cluster_name: bcl-cluster # already in place
+    my_vcenter_datacenter_name: "bcl" # already in place
+    my_vcenter_cluster_name: "bcl-cluster" # already in place
     my_vcenter_datastore_name: "datastore1 (1)" # already in place
-    my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
-    my_vcenter_port_segment_name: bcl-wrklds # already in place
+    my_vcenter_virtual_switch_name: "DSwitch-test" # vmc-hostswitch # already in place
+    my_vcenter_port_segment_name: "DPortGroup-test" # already in place
     my_vcenter_folder_name: vms # create?
     # my_vcenter_vm_parent_folder_name: vms # create?
     # my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
@@ -31,12 +31,15 @@
 
     # Vars  related to the template
 
-    my_template_cpu_count: 2
-    my_template_memory_mib: 4096
-    my_template_disk_capacity_gb: 50
-    my_iso_file_path: "[datastore1 (1)] ISO Files/my_windows_custom.iso"
+    my_template_cpu_count: 4
+    my_template_memory_mib: 8192
+    my_template_disk_capacity_gb: 30
+    my_iso_file_path: "[datastore1 (1)] ISO Files/my_custom_rhel92.iso"
 
   tasks:
+
+    - debug:
+        msg: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/DSwitch-test/DPortGroup-test') }}"
 
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
@@ -85,56 +88,59 @@
         state: start
         vm: "{{ my_vm.value[0].vm }}"
 
+    - debug:
+        var: "{{ my_vm }}"
+
     - name: Sleep for 10 minutes so the machine can finish the install
       ansible.builtin.wait_for:
         timeout: 600
 
-    - name: Power off VM
-      vmware.vmware_rest.vcenter_vm_power:
-        state: stop
-        vm: "{{ my_vm.value[0].vm }}"
+    #- name: Power off VM
+    #  vmware.vmware_rest.vcenter_vm_power:
+    #    state: stop
+    #    vm: "{{ my_vm.value[0].vm }}"
 
-    - name: List the cdrom devices on the guest
-      vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
-        vm: '{{ my_vm.value[0].vm }}'
-      register: cdrom_guest
+    #- name: List the cdrom devices on the guest
+    #  vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
+    #    vm: '{{ my_vm.value[0].vm }}'
+    #  register: cdrom_guest
 
-    - name: Detach CDROM from VM
-      vmware.vmware_rest.vcenter_vm_hardware_cdrom:
-        vm: '{{ my_vm.value[0].vm }}'
-        cdrom: "{{ cdrom_guest.value[0] }}"
-        state: absent
+    #- name: Detach CDROM from VM
+    #  vmware.vmware_rest.vcenter_vm_hardware_cdrom:
+    #    vm: '{{ my_vm.value[0].vm }}'
+    #    cdrom: "{{ cdrom_guest.value[0] }}"
+    #    state: absent
 
-    - name: Create a content library based on a DataStore
-      vmware.vmware_rest.content_locallibrary:
-        name: "{{ my_content_library_name }}"
-        description: automated
-        publish_info:
-          published: true
-          authentication_method: NONE
-        storage_backings:
-          - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
-            type: DATASTORE
-        state: present
+    #- name: Create a content library based on a DataStore
+    #  vmware.vmware_rest.content_locallibrary:
+    #    name: "{{ my_content_library_name }}"
+    #    description: automated
+    #    publish_info:
+    #      published: true
+    #      authentication_method: NONE
+    #    storage_backings:
+    #      - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
+    #        type: DATASTORE
+    #    state: present
 
-    - name: List all Local Content Library
-      register: all_content_libraries
-      vmware.vmware_rest.content_locallibrary_info:
+    #- name: List all Local Content Library
+    #  register: all_content_libraries
+    #  vmware.vmware_rest.content_locallibrary_info:
 
-    - name: Filter out content library id
-      ansible.builtin.set_fact:
-        my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
+    #- name: Filter out content library id
+    #  ansible.builtin.set_fact:
+    #    my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
 
-    - name: Create a template from VM in the library
-      vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
-        name: "{{ my_template_name }}"
-        library: '{{ my_content_library[0].id }}'
-        source_vm: '{{ my_vm.value[0].vm }}'
-        placement:
-          cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
-          folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
+    #- name: Create a template from VM in the library
+    #  vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
+    #    name: "{{ my_template_name }}"
+    #    library: '{{ my_content_library[0].id }}'
+    #    source_vm: '{{ my_vm.value[0].vm }}'
+    #    placement:
+    #      cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
+    #      folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
 
-    - name: Delete VM
-      vmware.vmware_rest.vcenter_vm:
-        vm: '{{ my_vm.value[0].vm }}'
-        state: absent
+    #- name: Delete VM
+    #  vmware.vmware_rest.vcenter_vm:
+    #    vm: '{{ my_vm.value[0].vm }}'
+    #    state: absent

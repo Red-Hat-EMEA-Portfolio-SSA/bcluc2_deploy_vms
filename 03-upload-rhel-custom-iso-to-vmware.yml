@@ -5,22 +5,22 @@
 
   vars:
 
-    my_source_file_full_path: "/var/www/html/isos/custom-rhel92.iso"
-    my_vcenter_datacenter_name: "bcl-cluster"
+    my_source_file_full_path: "/var/www/html/isos/test.txt" # "/var/www/html/isos/custom-rhel92.iso"
+    my_vcenter_datacenter_name: "bcl"
     my_datastore_name: "datastore1 (2)"
-    my_destination_path: "custom-rhel92.iso"
+    my_destination_path: "/test"
 
   tasks:
 
     - name: Copy file from host to DataStore
       community.vmware.vsphere_copy:
-        hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
-        username: "{{ lookup('env', 'VMWARE_USER') }}"
-        password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
-        validate_certs: false
-        src: "{{ my_source_file_full_path }}"
-        datacenter: "{{ my_vcenter_datacenter_name }}"
-        datastore: "{{ my_datastore_name }}"
-        dest: "{{ my_destination_path }}"
-        timeout: 600
+        #hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
+        #username: "{{ lookup('env', 'VMWARE_USER') }}"
+        #password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+        # validate_certs: false
+        src: "/var/www/html/isos/test.txt" # "{{ my_source_file_full_path }}"
+        datacenter: "bcl" # "{{ my_vcenter_datacenter_name }}"
+        datastore: "datastore1 (2)" # "{{ my_datastore_name }}"
+        dest: "/test/test.txt" # "{{ my_destination_path }}"
+        # timeout: 100
       delegate_to: bastion

@@ -1,0 +1,85 @@
+---
+- name: Seal RHEL9 VM
+  hosts: filemon
+  become: false
+  gather_facts: false
+
+  # https://access.redhat.com/solutions/5793031
+
+  tasks:
+
+    - name: Install cloud-init and open-vm-tools
+      ansible.builtin.dnf:
+        name:
+          - cloud-init
+          - open-vm-tools
+        state: present
+
+    - name: Upgrade all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+
+    - name: Unregister machine
+      ansible.builtin.command: |
+        subscription-manager unregister
+        subscription-manager remove --all
+        subscription-manager clean
+
+    - name: Remove UUID from interface configuration
+      ansible.builtin.lineinfile:
+        path: /etc/NetworkManager/system-connections/ens160.nmconnection
+        regexp: '^uuid'
+        state: absent
+
+    - name: Remove /etc/resolv.conf and /etc/machine-id
+      loop:
+        - /etc/resolv.conf
+        - /etc/machine-id
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+
+    - name: Create emtpy /etc/resolv.conf
+      ansible.builtin.file:
+        path: /etc/resolv.conf
+        mode: '0644'
+        state: touch
+
+    - name: Set machine-id as uninitialazed
+      ansible.builtin.lineinfile:
+        path: /etc/machine-id
+        create: true
+        line: uninitialized
+        mode: '0644'
+
+    - name: Find all files matching /etc/udev/rules.d/70-persistent-*
+      register: udevfiles
+      ansible.builtin.find:
+        path: /etc/udev/rules.d
+        patterns: '^70-persistent-'
+        use_regex: true
+
+    - name: Remove MAC to interface name associations
+      loop: "{{ udevfiles.files | map(attribute='path') | list }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0644'
+        state: absent
+
+    - name: Set a generic hostname
+      ansible.builtin.hostname:
+        name: localhost.localdomain
+
+    - name: Find all files matching /etc/ssh/ssh_host_*
+      register: sshhostfiles
+      ansible.builtin.find:
+        path: /etc/ssh
+        patterns: '^ssh_host_'
+        use_regex: true
+
+    - name: Remove host SSH keys
+      loop: "{{ sshhostfiles.files | map(attribute='path') | list }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
