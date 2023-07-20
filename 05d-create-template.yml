@@ -42,12 +42,15 @@
     - name: List the cdrom devices on the guest
       vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
         vm: '{{ my_vm.value[0].vm }}'
-      register: cdrom_guest
+      register: cdrom_template_vm
+
+    - debug:
+        msg: "{{ cdrom_template_vm.value[0] }}"
 
     - name: Detach CDROM from VM
       vmware.vmware_rest.vcenter_vm_hardware_cdrom:
         vm: '{{ my_vm.value[0].vm }}'
-        cdrom: "{{ cdrom_guest.value[0] }}"
+        cdrom: "{{ cdrom_template_vm.value[0] }}"
         state: absent
 
 #    - name: Create a content library based on a DataStore
