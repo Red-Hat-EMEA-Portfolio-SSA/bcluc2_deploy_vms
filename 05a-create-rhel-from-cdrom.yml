@@ -38,9 +38,6 @@
 
   tasks:
 
-    - debug:
-        msg: "{{ lookup('vmware.vmware_rest.network_moid', '/{{ my_vcenter_datacenter_name }}/network/DSwitch-test/DPortGroup-test') }}"
-
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
@@ -87,9 +84,6 @@
       vmware.vmware_rest.vcenter_vm_power:
         state: start
         vm: "{{ my_vm.value[0].vm }}"
-
-    - debug:
-        var: "{{ my_vm }}"
 
     - name: Sleep for 10 minutes so the machine can finish the install
       ansible.builtin.wait_for:
