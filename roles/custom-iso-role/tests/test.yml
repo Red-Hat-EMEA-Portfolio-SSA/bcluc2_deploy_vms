@@ -5,7 +5,7 @@
 
   vars:
     # Directories and files
-    my_original_iso_full_path: /ISO-files/rhel-8.5-x86_64-dvd.iso
+    my_original_iso_full_filename: /ISO-files/rhel-8.5-x86_64-dvd.iso
     my_custom_iso: /ISO-files/my_custom.iso
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir

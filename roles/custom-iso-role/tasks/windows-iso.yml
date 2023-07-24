@@ -3,7 +3,7 @@
   become: true
   ansible.builtin.mount:
     path: "{{ my_mnt_dir }}"
-    src: "{{ my_original_iso_full_path }}"
+    src: "{{ my_original_iso_full_filename }}"
     fstype: udf
     opts: ro
     state: mounted

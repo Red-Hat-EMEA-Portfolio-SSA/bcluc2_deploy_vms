@@ -37,4 +37,4 @@ my_vms_from_template:
 my_template_cpu_count: 2
 my_template_memory_mib: 4096
 my_template_disk_capacity_gb: 50
-my_iso_file_path: "[datastore1 (1)] ISO Files/my_windows_custom.iso"
+my_iso_file_filename: "[datastore1 (1)] ISO Files/my_windows_custom.iso"

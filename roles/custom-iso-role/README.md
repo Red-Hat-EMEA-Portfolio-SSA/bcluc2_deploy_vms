@@ -7,7 +7,7 @@ Role Variables
 --------------
 
 The role need a original Red Hat provided iso file and also a name for the custom iso that will generate. You can define these values with this variables:
-        my_original_iso_full_path: ~/rhel9.iso
+        my_original_iso_full_filename: ~/rhel9.iso
         my_custom_iso: ~/custom-rhel9.iso
 
 Also, the role will mount the Red Hat original iso file into a directory and will copy all of its content into a working directory so it can then create a new iso file from all the original information. You can define the mount and working directories with the following variables:
@@ -56,7 +56,7 @@ The most simple example would be the following:
       
       vars
         #Directories and files
-        my_original_iso_full_path: ~/rhel9.iso
+        my_original_iso_full_filename: ~/rhel9.iso
         my_custom_iso: ~/custom-rhel9.iso
         my_working_dir: /tmp/working-dir
         my_mnt_dir: /tmp/mnt-dir

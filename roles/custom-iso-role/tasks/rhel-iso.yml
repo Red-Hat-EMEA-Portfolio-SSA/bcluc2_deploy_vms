@@ -3,14 +3,14 @@
   become: true
   ansible.builtin.mount:
     path: "{{ my_mnt_dir }}"
-    src: "{{ my_original_iso_full_path }}"
+    src: "{{ my_original_iso_full_filename }}"
     fstype: "iso9660"
     opts: loop,ro
     state: mounted
 
 - name: Get RHEL version out of original iso file
   register: blkid_output
-  ansible.builtin.shell: "blkid {{ my_original_iso_full_path }}"
+  ansible.builtin.shell: "blkid {{ my_original_iso_full_filename }}"
 
 - name: Set variables according to detected RHEL
   ansible.builtin.set_fact:
