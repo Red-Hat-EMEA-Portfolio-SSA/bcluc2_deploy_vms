@@ -5,11 +5,8 @@
 
   vars:
 
-    # my_source_file_full_path: "/var/www/html/isos/test.txt" # "/var/www/html/isos/custom-rhel92.iso"
-    my_source_file_full_path: "/var/www/html/isos/custom-rhel92.iso"
-    my_vcenter_datacenter_name: "bcl"
-    my_datastore_name: "datastore1 (2)"
-    my_destination_path: "/msifolder/custom-rhel92.iso"
+    my_source_file_full_filename: "{{ rhel_flavor.my_custom_iso }}"
+    my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ rhel_flavor.my_custom_iso_short }}"
 
   tasks:
 
@@ -19,9 +16,9 @@
         username: "{{ lookup('env', 'VMWARE_USER') }}"
         password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
         validate_certs: false
-        src: "{{ my_source_file_full_path }}"
+        src: "{{ my_source_file_full_filename }}"
         datacenter: "{{ my_vcenter_datacenter_name }}"
-        datastore: "{{ my_datastore_name }}"
-        dest: "{{ my_destination_path }}"
+        datastore: "{{ my_vcenter_datastore_name }}"
+        dest: "{{ my_destination_filename }}"
         # timeout: 100
       delegate_to: bastion

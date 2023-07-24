@@ -8,19 +8,19 @@
 
   vars:
 
-    my_os_type: "RHEL"
+    my_os_type: "{{ rhel_flavor.my_os_type }}"
+    my_original_iso_full_filename: "{{ rhel_flavor.my_original_iso_full_filename }}"
+    my_custom_iso: "{{ rhel_flavor.my_custom_iso }}"
 
     # Directories and files
-    my_original_iso_full_path: "/var/www/html/isos/rhel-9.2-x86_64-dvd.iso"
-    my_custom_iso: "/var/www/html/isos/custom-rhel92.iso"
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir
 
     # General iso configuration
-    my_system_language: en_US
-    my_keyboard_layout: es
-    my_time_zone: Europe/Paris
-    my_root_pass: redhat
+    my_system_language: "{{ rhel_flavor.my_system_language }}"
+    my_keyboard_layout: "{{ rhel_flavor.my_keyboard_layout }}"
+    my_time_zone: "{{ rhel_flavor.my_time_zone }}"
+    my_root_pass: "{{ rhel_flavor.my_root_pass }}"
 
     # Networking options for iso file
     my_network_bootprotocol: dhcp # Mandatory variable, options are "dhcp" or "static"

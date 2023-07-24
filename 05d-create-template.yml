@@ -8,23 +8,16 @@
 
     # Vars created by VMware admin
 
-    my_vcenter_datacenter_name: "bcl" # already in place
-    my_vcenter_cluster_name: "bcl-cluster" # already in place
-    my_vcenter_datastore_name: "datastore1 (1)" # already in place
-    my_vcenter_virtual_switch_name: "DSwitch-test" # vmc-hostswitch # already in place
-    my_vcenter_port_segment_name: "DPortGroup-test" # already in place
-    my_vcenter_folder_name: vms # create?
-    # my_vcenter_vm_parent_folder_name: vms # create?
-    # my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
-    my_content_library_name: my_library_on_datastore # create
-    my_template_name: custom-windows19-template # create
+    my_template_name: "{{ rhel_flavor.my_template_name }}"
 
     # Vars  related to the template
 
-    my_template_cpu_count: 4
-    my_template_memory_mib: 8192
-    my_template_disk_capacity_gb: 30
-    my_iso_file_path: "[datastore1 (1)] ISO Files/my_custom_rhel92.iso"
+    my_template_cpu_count: "{{ rhel_flavor.my_template_cpu_count }}"
+    my_template_memory_mib: "{{ rhel_flavor.my_template_memory_mib }}"
+    my_template_disk_capacity_gb: "{{ rhel_flavor.my_template_disk_capacity_gb }}"
+
+    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ my_custom_iso_short }}"
+
 
   tasks:
 
@@ -56,6 +49,7 @@
         cdrom: "{{ cdrom_template_vm.value[0].cdrom }}"
         start_connected: false
         state: absent
+      when: cdrom_template_vm.value[0] is defined
 
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
@@ -73,6 +67,7 @@
           - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
             type: DATASTORE
         state: present
+      register: my_content_library_created
 
     - name: List all Local Content Library
       register: all_content_libraries
@@ -82,10 +77,21 @@
       ansible.builtin.set_fact:
         my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
 
+    - name: print my_content_library_created
+      debug: 
+        var: my_content_library_created
+      when: debug | default ('false') | bool
+
+    - name: print my_content_library
+      debug: 
+        var: my_content_library
+      when: debug | default ('false') | bool
+
     - name: Create a template from VM in the library
       vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
         name: "{{ my_template_name }}"
-        library: '{{ my_content_library[0].id }}'
+        # library: '{{ my_content_library[0].id }}'
+        library: '{{ my_content_library_created.id }}'
         source_vm: '{{ my_vm.value[0].vm }}'
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"

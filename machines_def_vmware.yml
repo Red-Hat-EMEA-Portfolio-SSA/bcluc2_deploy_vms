@@ -1,16 +1,19 @@
 ---
 - my_vcenter_vm_name: mafalda
-  my_template_name: custom-rhel92-template
+  # my_template_name: "{{ rhel_flavor.my_template_name }}"
+  my_template_name: "custom-rhel-template"
   my_vcenter_datacenter_name: bcl
   my_vcenter_vm_parent_folder_name: /vm/vms
   my_vcenter_cluster_name: bcl-cluster
 - my_vcenter_vm_name: asterix
-  my_template_name: custom-rhel92-template
+  # my_template_name: "{{ rhel_flavor.my_template_name }}"
+  my_template_name: "custom-rhel-template"
   my_vcenter_datacenter_name: bcl
   my_vcenter_vm_parent_folder_name: /vm/vms
   my_vcenter_cluster_name: bcl-cluster
 - my_vcenter_vm_name: obelix
-  my_template_name: custom-windows19-template
+  # my_template_name: "{{ win_flavor.my_template_name }}"
+  my_template_name: "custom_windows19-template"
   my_vcenter_datacenter_name: bcl
   my_vcenter_vm_parent_folder_name: /vm/vms
   my_vcenter_cluster_name: bcl-cluster

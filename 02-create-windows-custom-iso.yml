@@ -6,12 +6,12 @@
 
   vars:
     # Directories and files
-    my_original_iso_full_path: "/var/www/html/isos/windows2019.iso"
-    my_custom_iso: "/var/www/html/isos/custom-windows2019.iso"
+    my_original_iso_full_filename: "{{ win_flavor.my_original_iso_full_filename }}"
+    my_custom_iso: "{{ win_flavor.my_custom_iso }}"
+    my_os_type: "{{ win_flavor.my_os_type }}"
+
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir
-    my_os_type: "Windows"
-
 
   roles:
     - custom-iso-role

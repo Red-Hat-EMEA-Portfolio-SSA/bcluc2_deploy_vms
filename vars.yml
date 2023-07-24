@@ -1,20 +1,53 @@
 #Remember to pass the ENV variables "VMWARE_HOST" and "VMWARE_PASSWORD" to the EE
 
 #Vars created by VMware admin
+my_vcenter_datacenter_name: "bcl"
+#my_vcenter_datastore_name: "datastore1 (2)"
 
-my_vcenter_datacenter_name: SDDC-Datacenter # already in place
-my_vcenter_cluster_name: Cluster-1 # already in place
-my_vcenter_datastore_name: WorkloadDatastore # already in place
-my_vcenter_virtual_switch_name: vmc-hostswitch # already in place
-my_vcenter_port_segment_name: segment-sandbox-2lqrd # already in place
-my_vcenter_vm_parent_folder_name: /Workloads/sandbox-2lqrd # create?
-my_vcenter_vm_child_folder_name: sandbox-2lqrd
-my_content_library_name: ISOs_Templates # create
-my_template_name: rhel86-tpl # create
+my_vcenter_cluster_name: "bcl-cluster" # already in place
+my_vcenter_datastore_name: "datastore1 (1)" # already in place
+my_vcenter_virtual_switch_name: "DSwitch-test" # vmc-hostswitch # already in place
+my_vcenter_port_segment_name: "DPortGroup-test" # already in place
+# need to move to: (but only when they are working correctly)
+# my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
+# my_vcenter_port_segment_name: bcl-wrklds # already in place
+
+my_vcenter_folder_name: vms # create?
+# my_vcenter_vm_parent_folder_name: vms # create?
+# my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
+my_content_library_name: my_library_on_datastore # create
+my_vcenter_isofile_dir: "/ISO Files"
+my_vcenter_isofile_dir_with_ds: "[datastore1 (1)] ISO Files"
+
+
+rhel_flavor:
+  my_os_type: "RHEL"
+  my_original_iso_full_filename: "/var/www/html/isos/rhel-9.2-x86_64-dvd.iso"
+  my_custom_iso: "/var/www/html/isos/custom-rhel92.iso"
+  my_custom_iso_short: "custom-rhel92.iso"
+  my_template_name: "custom-rhel-template"
+  # General iso configuration
+  my_system_language: en_US
+  my_keyboard_layout: es
+  my_time_zone: Europe/Paris
+  my_root_pass: redhat
+
+  my_template_cpu_count: 4
+  my_template_memory_mib: 8192
+  my_template_disk_capacity_gb: 30
+
+
+win_flavor:
+  my_os_type: "Windows"
+  my_original_iso_full_filename: "/var/www/html/isos/windows2019.iso"
+  my_custom_iso: "/var/www/html/isos/custom-windows2019.iso"
+  my_custom_iso_short: "custom-windows2019.iso"
+  my_template_name: "custom_windows19-template"
+
 
 #Vars related to the template
 
-my_template_cpu_count: 2
-my_template_memory_mib: 4096
-my_template_disk_capacity_gb: 50
-my_iso_file_path: "[WorkloadDatastore] d15d9964-8b51-3f46-3c39-02f3b810c191/rhel-9.2-x86_64-dvd.iso"
+# my_template_cpu_count: 2
+# my_template_memory_mib: 4096
+# my_template_disk_capacity_gb: 50
+# my_iso_file_filename: "[WorkloadDatastore] d15d9964-8b51-3f46-3c39-02f3b810c191/rhel-9.2-x86_64-dvd.iso"

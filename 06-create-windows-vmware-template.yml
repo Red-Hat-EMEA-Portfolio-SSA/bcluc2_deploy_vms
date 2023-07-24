@@ -18,23 +18,14 @@
 
     # Vars created by VMware admin
 
-    my_vcenter_datacenter_name: bcl # already in place
-    my_vcenter_cluster_name: bcl-cluster # already in place
-    my_vcenter_datastore_name: "datastore1 (1)" # already in place
-    my_vcenter_virtual_switch_name: bcl-vswitch # vmc-hostswitch # already in place
-    my_vcenter_port_segment_name: bcl-wrklds # already in place
-    my_vcenter_folder_name: vms # create?
-    # my_vcenter_vm_parent_folder_name: vms # create?
-    # my_vcenter_vm_child_folder_name: sandbox-6kmgg # should we work without parent folder
-    my_content_library_name: my_library_on_datastore # create
-    my_template_name: custom-windows19-template # create
+    my_template_name: "{{ win_flavor.my_template_name }}"
 
     # Vars related to the template
 
-    my_template_cpu_count: 2
-    my_template_memory_mib: 4096
-    my_template_disk_capacity_gb: 50
-    my_iso_file_path: "[datastore1 (1)] ISO Files/my_windows_custom.iso"
+    my_template_cpu_count: "{{ win_flavor.my_template_cpu_count }}"
+    my_template_memory_mib: "{{ win_flavor.my_template_memory_mib }}"
+    my_template_disk_capacity_gb: "{{ win_flavor.my_template_disk_capacity_gb }}"
+    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ win_flavor.my_custom_iso_short }}"
 
   tasks:
 
@@ -56,7 +47,7 @@
         cdroms:
           - start_connected: true
             backing:
-              iso_file: "{{ my_iso_file_path }}"
+              iso_file: "{{ my_iso_file_fullname }}"
               type: ISO_FILE
               state: present
             type: SATA

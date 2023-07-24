@@ -6,7 +6,7 @@
 
   vars:
     # Directories and files
-    my_original_iso_full_path: /home/preciado/window2019.iso
+    my_original_iso_full_filename: /home/preciado/window2019.iso
     my_custom_iso: /home/preciado/my_windows_custom.iso
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir

@@ -34,7 +34,7 @@
         cdroms:
           - start_connected: true
             backing:
-              iso_file: "{{ my_iso_file_path }}"
+              iso_file: "{{ my_iso_file_filename }}"
               type: ISO_FILE
               state: present
             type: SATA
