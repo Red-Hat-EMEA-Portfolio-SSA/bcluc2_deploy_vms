@@ -84,3 +84,9 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
+
+    - name: Allow password login via ssh
+      ansible.builtin.lineinfile:
+         path: /etc/ssh/sshd_config
+         regexp: "PassowrdAuthentication:"
+         line: "PassowrdAuthentication: yes"
