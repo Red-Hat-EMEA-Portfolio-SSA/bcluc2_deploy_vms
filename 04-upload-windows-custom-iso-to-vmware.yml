@@ -4,9 +4,9 @@
   become: false
 
   vars:
-
-    my_source_file_full_filename: "{{ win_flavor.my_custom_iso }}"
-    my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ win_flavor.my_custom_iso_short }}"
+    my_flavor: "win"
+    my_source_file_full_filename: "{{ flavor[my_flavor].my_custom_iso }}"
+    my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
 

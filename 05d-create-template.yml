@@ -7,16 +7,18 @@
   vars:
 
     # Vars created by VMware admin
+    my_flavor: "rhel"
 
-    my_template_name: "{{ rhel_flavor.my_template_name }}"
+    my_template_name: "{{ flavor[my_flavor].my_template_name }}"
 
     # Vars  related to the template
 
-    my_template_cpu_count: "{{ rhel_flavor.my_template_cpu_count }}"
-    my_template_memory_mib: "{{ rhel_flavor.my_template_memory_mib }}"
-    my_template_disk_capacity_gb: "{{ rhel_flavor.my_template_disk_capacity_gb }}"
+    my_template_cpu_count: "{{ flavor[my_flavor].my_template_cpu_count }}"
+    my_template_memory_mib: "{{ flavor[my_flavor].my_template_memory_mib }}"
 
-    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ my_custom_iso_short }}"
+    my_template_disk_capacity_gb: "{{ flavor[my_flavor].my_template_disk_capacity_gb }}"
+
+    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
 
   tasks:
