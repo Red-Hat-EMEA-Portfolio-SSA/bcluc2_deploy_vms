@@ -26,17 +26,17 @@
     path: "{{ my_mnt_dir }}"
     state: unmounted
 
-# - name: Create autounattend.xml file from template
-#   become: true
-#   ansible.builtin.template:
-#     src: autounattend.xml.j2
-#     dest: "{{ my_working_dir }}/autounattend.xml"
-
-- name: Copy autounattend.xml file from role
+- name: Create autounattend.xml file from template
   become: true
-  ansible.builtin.copy:
-    src: files/autounattend.xml
+  ansible.builtin.template:
+    src: autounattend.xml.j2
     dest: "{{ my_working_dir }}/autounattend.xml"
+
+# - name: Copy autounattend.xml file from role
+#   become: true
+#   ansible.builtin.copy:
+#     src: files/autounattend.xml
+#     dest: "{{ my_working_dir }}/autounattend.xml"
 
 - name: Remove unnecessary files
   ansible.builtin.file:
