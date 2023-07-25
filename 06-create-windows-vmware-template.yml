@@ -17,15 +17,16 @@
   vars:
 
     # Vars created by VMware admin
+    my_flavor: "win"
 
-    my_template_name: "{{ win_flavor.my_template_name }}"
+    my_template_name: "{{ flavor[my_flavor].my_template_name }}"
 
     # Vars related to the template
 
-    my_template_cpu_count: "{{ win_flavor.my_template_cpu_count }}"
-    my_template_memory_mib: "{{ win_flavor.my_template_memory_mib }}"
-    my_template_disk_capacity_gb: "{{ win_flavor.my_template_disk_capacity_gb }}"
-    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ win_flavor.my_custom_iso_short }}"
+    my_template_cpu_count: "{{ flavor[my_flavor].my_template_cpu_count }}"
+    my_template_memory_mib: "{{ flavor[my_flavor].my_template_memory_mib }}"
+    my_template_disk_capacity_gb: "{{ flavor[my_flavor].my_template_disk_capacity_gb }}"
+    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
 
@@ -86,9 +87,9 @@
         state: start
         vm: "{{ my_vm.value[0].vm }}"
 
-#    - name: Sleep for 10 minutes so the machine can finish the install
-#      ansible.builtin.wait_for:
-#        timeout: 600
+    - name: Sleep for 20 minutes so the machine can finish the install
+      ansible.builtin.wait_for:
+        timeout: 1200
 #
 #    - name: Wait for power state to be operations_ready
 #      vmware.vmware_rest.vcenter_vm_guest_power_info:
@@ -106,35 +107,36 @@
         vm: "{{ my_vm.value[0].vm }}"
         state: connect
 
-    - name: Wait for guest network interfaces information to be available
-      vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
-        vm: '{{ my_vm_info.id }}'
-      register: my_vm_interfaceinfo
-      retries: 60 
-      delay: 10 # seconds
-      until:
-        - my_vm_interfaceinfo.value[0] is defined 
-
-    - name: Print out infos on my_vm_interfaceinfo
-      debug:
-        var: my_vm_interfaceinfo
-      when: debug | default ('false') | bool
-
-    - name: extract ip address
-      ansible.builtin.set_fact:
-        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
-    
-    - name: Print out ip address
-      debug:
-        var: my_vm_ip
-      when: debug | default ('false') | bool
-
-    - name: wait for ssh to be ready
-      ansible.builtin.wait_for:
-        port: 22
-        host: "{{ my_vm_ip }}"
-        delay: 10 # seconds
-        timeout: 600 
+## doesn't work yet
+##     - name: Wait for guest network interfaces information to be available
+##       vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
+##         vm: '{{ my_vm_info.id }}'
+##       register: my_vm_interfaceinfo
+##       retries: 60 
+##       delay: 10 # seconds
+##       until:
+##         - my_vm_interfaceinfo.value[0] is defined 
+## 
+##     - name: Print out infos on my_vm_interfaceinfo
+##       debug:
+##         var: my_vm_interfaceinfo
+##       when: debug | default ('false') | bool
+## 
+##     - name: extract ip address
+##       ansible.builtin.set_fact:
+##         my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
+##     
+##     - name: Print out ip address
+##       debug:
+##         var: my_vm_ip
+##       when: debug | default ('false') | bool
+## 
+##     - name: wait for ssh to be ready
+##       ansible.builtin.wait_for:
+##         port: 22
+##         host: "{{ my_vm_ip }}"
+##         delay: 10 # seconds
+##         timeout: 600 
 
     - name: List the cdrom devices on the guest
       vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
@@ -146,6 +148,7 @@
         vm: '{{ my_vm.value[0].vm }}'
         cdrom: "{{ cdrom_guest.value[0].cdrom }}"
         state: absent
+      when: cdrom_template_vm.value[0] is defined
 
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
