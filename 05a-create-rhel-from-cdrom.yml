@@ -124,9 +124,9 @@
 
     - name: add hosts to static inventory 
       ansible.controller.host:
-        controller_host: "{{ controller_host }}"
-        controller_username: "{{ controller_username }}"
-        controller_password: "{{ controller_password }}"
+        #controller_host: "{{ controller_host }}"
+        #controller_username: "{{ controller_username }}"
+        #controller_password: "{{ controller_password }}"
         validate_certs: no
     
         inventory: "{{ awx_inventory_name }}"
