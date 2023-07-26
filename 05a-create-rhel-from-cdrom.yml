@@ -124,12 +124,12 @@
 
     - name: add hosts to static inventory 
       ansible.controller.host:
-        #controller_host: "{{ controller_host }}"
-        #controller_username: "{{ controller_username }}"
-        #controller_password: "{{ controller_password }}"
+        controller_host: "{{ ansible.builtin.lookup('ENV','CONTROLLER_HOST') }}"
+        controller_username: "{{ ansible.builtin.lookup('ENV','CONTROLLER_USERNAME') }}"
+        controller_password: "{{ ansible.builtin.lookup('ENV', 'CONTROLLER_PASSWORD') }}"
         validate_certs: no
     
-        inventory: "{{ awx_inventory_name }}"
+        inventory: "{{ awx_inventory_name }}"
         name: "_temporary_rhelvm"
         enabled: true
         state: present
