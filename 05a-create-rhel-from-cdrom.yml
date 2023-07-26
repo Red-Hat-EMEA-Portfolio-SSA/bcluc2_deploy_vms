@@ -25,7 +25,7 @@
     my_template_memory_mib: "{{ flavor[my_flavor].my_template_memory_mib }}"
     my_template_disk_capacity_gb: "{{ flavor[my_flavor].my_template_disk_capacity_gb }}"
 
-    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ my_custom_iso_short }}"
+    my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
 
@@ -113,6 +113,29 @@
       debug:
         var: my_vm_ip
       when: debug | default ('false') | bool
+
+    - name: Add Host to inventory
+      add_host:
+        name: "_temporary_rhelvm"
+        ansible_host: "{{ my_vm_ip  }}"
+        # ansible_user:
+        # ansible_password:
+      when: awx_inventory_name is not defined
+
+    - name: add hosts to static inventory 
+      ansible.controller.host:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "_temporary_rhelvm"
+        enabled: true
+        state: present
+        variables:
+          ansible_host: "{{ my_vm_ip  }}"
+      when: awx_inventory_name is defined
 
     - name: wait for ssh to be ready
       ansible.builtin.wait_for:

@@ -1,6 +1,6 @@
 ---
 - name: Seal RHEL9 VM
-  hosts: filemon
+  hosts: _temporary_rhelvm
   become: true
   gather_facts: false
 
@@ -87,6 +87,6 @@
 
     - name: Allow password login via ssh
       ansible.builtin.lineinfile:
-         path: /etc/ssh/sshd_config
-         regexp: "PassowrdAuthentication:"
-         line: "PassowrdAuthentication: yes"
+        path: /etc/ssh/sshd_config
+        regexp: "PassowrdAuthentication:"
+        line: "PassowrdAuthentication: yes"

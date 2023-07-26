@@ -126,6 +126,29 @@
         var: my_vm_ip
       when: debug | default ('false') | bool
 
+    - name: Add Host to inventory
+      add_host:
+        name: "_temporary_winvm"
+        ansible_host: "{{ my_vm_ip  }}"
+        # ansible_user:
+        # ansible_password:
+      when: awx_inventory_name is not defined
+
+    - name: add hosts to static inventory 
+      ansible.controller.host:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "_temporary_winvm"
+        enabled: true
+        state: present
+        variables:
+          ansible_host: "{{ my_vm_ip  }}"
+      when: awx_inventory_name is defined
+
 # no ssh on windows
 #     - name: wait for ssh to be ready
 #       ansible.builtin.wait_for:
