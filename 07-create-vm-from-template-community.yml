@@ -4,6 +4,28 @@
   become: false
   gather_facts: false
 
+  vars:
+    my_vms_from_template:
+      - my_vcenter_vm_name: mafalda
+        # my_template_name: "{{ flavor['rhel'].my_template_name }}"
+        my_template_name: "custom-rhel-template"
+        my_vcenter_datacenter_name: bcl
+        my_vcenter_vm_parent_folder_name: /vm/vms
+        my_vcenter_cluster_name: bcl-cluster
+      - my_vcenter_vm_name: asterix
+        # my_template_name: "{{ flavor['rhel'].my_template_name }}"
+        my_template_name: "custom-rhel-template"
+        my_vcenter_datacenter_name: bcl
+        my_vcenter_vm_parent_folder_name: /vm/vms
+        my_vcenter_cluster_name: bcl-cluster
+      - my_vcenter_vm_name: obelix
+        # my_template_name: "{{ flavor['win'].my_template_name }}"
+        my_template_name: "custom_windows19-template"
+        my_vcenter_datacenter_name: bcl
+        my_vcenter_vm_parent_folder_name: /vm/vms
+        my_vcenter_cluster_name: bcl-cluster
+
+
   tasks:
     - name: Clone the template
       community.vmware.vmware_guest:
@@ -18,4 +40,71 @@
         state: poweredon
         cluster: "{{ item.my_vcenter_cluster_name }}"
         wait_for_ip_address: true
-      loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
+      loop: "{{ my_vms_from_template }}"
+      ## loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
+      register: my_vms_created
+
+    - name: Print result of vm creation
+      ansible.builtin.debug:
+        var: my_vms_created
+      when: debug | default ('false') | bool
+
+    - name: Print add Hosts to inventory parameters
+      ansible.builtin.debug:
+        msg: |
+          name: "{{ item.instance.hw_name }}"
+          ansible_host: "{{ item.instance.ipv4 }}"
+          groups: "{{ item.instance.hw_guest_id }}"
+      loop: "{{ my_vms_created.results }}"
+      when: debug | default ('false') | bool
+
+    - name: Add Hosts to inventory
+      add_host:
+        name: "{{ item.instance.hw_name }}"
+        ansible_host: "{{ item.instance.ipv4 }}"
+        groups: "{{ item.instance.hw_guest_id }}"
+        # ansible_user:
+        # ansible_password:
+      loop: "{{ my_vms_created.results }}"
+      when: awx_inventory_name is not defined
+  
+    - name: add hosts to static inventory 
+      ansible.controller.host:
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "{{ item.instance.hw_name }}"
+        enabled: true
+        state: present
+        variables:
+          ansible_host: "{{ item.instance.ipv4 }}"
+          group_name: "{{ item.instance.hw_guest_id }}"
+      when: awx_inventory_name is defined
+      loop: "{{ my_vms_created.results }}"
+
+    - name: create host-groups
+      # will create same group more than once...
+      ansible.controller.group:
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "{{ item.instance.hw_guest_id }}"
+        state: present
+      delegate_to: localhost
+      when: awx_inventory_name is defined
+      loop: "{{ my_vms_created.results }}"
+
+    - name: add hosts to groups
+      ansible.controller.group:
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "{{ item.instance.hw_guest_id }}"
+        hosts:
+          - "{{ item.instance.hw_name }}"
+        preserve_existing_hosts: True
+        #preserve_existing_children: True
+        state: present
+      delegate_to: localhost
+      when: awx_inventory_name is defined
+      loop: "{{ my_vms_created.results }}"
