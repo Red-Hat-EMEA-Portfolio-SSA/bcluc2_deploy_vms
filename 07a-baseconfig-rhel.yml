@@ -1,0 +1,12 @@
+---
+- name: Base configuration of RHEL Systems
+  hosts: rhel9_64Guest
+  become: true
+  tasks:
+    - name: Register with activationkey and consume subscriptions matching Red Hat Enterprise Server
+      redhat_subscription:
+        state: present
+        activationkey: RHEL
+        org_id: 7257185
+        force_register: true
+        #auto_attach: true
