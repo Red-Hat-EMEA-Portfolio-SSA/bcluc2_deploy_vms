@@ -58,7 +58,7 @@
       loop: "{{ my_vms_created.results }}"
       when: debug | default ('false') | bool
 
-    - name: Add Hosts to inventory
+    - name: Add RHEL Hosts to inventory
       add_host:
         name: "{{ item.instance.hw_name }}"
         ansible_host: "{{ item.instance.ipv4 }}"
@@ -66,7 +66,23 @@
         # ansible_user:
         # ansible_password:
       loop: "{{ my_vms_created.results }}"
-      when: awx_inventory_name is not defined
+      when:
+        - awx_inventory_name is not defined
+        - item.instance.hw_guest_id is 'rhel9_64Guest'
+  
+    - name: Add WIN Hosts to inventory
+      add_host:
+        name: "{{ item.instance.hw_name }}"
+        ansible_host: "{{ item.instance.ipv4 }}"
+        ansible_connection: winrm
+        ansible_winrm_transport: basic
+        groups: "{{ item.instance.hw_guest_id }}"
+        # ansible_user:
+        # ansible_password:
+      loop: "{{ my_vms_created.results }}"
+      when:
+        - awx_inventory_name is not defined
+        - item.instance.hw_guest_id is 'windows2019srv_64Guest'
   
     - name: add hosts to static inventory 
       ansible.controller.host:
@@ -79,10 +95,11 @@
         variables:
           ansible_host: "{{ item.instance.ipv4 }}"
           group_name: "{{ item.instance.hw_guest_id }}"
-      when: awx_inventory_name is defined
+      when: 
+        - awx_inventory_name is defined
       loop: "{{ my_vms_created.results }}"
 
-    - name: create host-groups
+    - name: create RHEL host-groups
       # will create same group more than once...
       ansible.controller.group:
         validate_certs: no
@@ -91,7 +108,26 @@
         name: "{{ item.instance.hw_guest_id }}"
         state: present
       delegate_to: localhost
-      when: awx_inventory_name is defined
+      when: 
+        - awx_inventory_name is defined
+        - item.instance.hw_guest_id is 'rhel9_64Guest'
+      loop: "{{ my_vms_created.results }}"
+
+    - name: create WIN host-groups
+      # will create same group more than once...
+      ansible.controller.group:
+        validate_certs: no
+    
+        inventory: "{{ awx_inventory_name }}"
+        name: "{{ item.instance.hw_guest_id }}"
+        state: present
+        variables:
+          ansible_connection: winrm
+          ansible_winrm_transport: basic
+      delegate_to: localhost
+      when:
+        - awx_inventory_name is defined
+        - item.instance.hw_guest_id is 'windows2019srv_64Guest'
       loop: "{{ my_vms_created.results }}"
 
     - name: add hosts to groups
