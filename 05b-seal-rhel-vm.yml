@@ -88,5 +88,7 @@
     - name: Allow password login via ssh
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
-        regexp: "PassowrdAuthentication:"
-        line: "PassowrdAuthentication: yes"
+        regexp: "^PasswordAuthentication:"
+        insertafter: "#PasswordAuthentication:"
+        line: "PasswordAuthentication: yes"
+
