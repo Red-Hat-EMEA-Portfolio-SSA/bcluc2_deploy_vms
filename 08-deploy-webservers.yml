@@ -1,6 +1,6 @@
 ---
 - name: Deploy webservers in inventory (RHEL and/or Windows)
-  hosts: webservers
+  hosts: windows2019srv_64Guest, rhel9_64Guest
   gather_facts: true
 
   roles:
