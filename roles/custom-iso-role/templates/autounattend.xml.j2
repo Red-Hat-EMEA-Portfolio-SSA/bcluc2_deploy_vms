@@ -95,29 +95,45 @@
 			</AutoLogon>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>reg ADD HKLM\SYSTEM\CurrentControlSet\Control\Network\NewNetworkWindowOff /f</CommandLine>
+                    <CommandLine>cmd.exe /c reg add "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"</CommandLine>
                     <Description>Disable network discovery prompt for all users</Description>
-                    <Order>10</Order>
+                    <Order>1</Order>
                 </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
+                <!-- <SynchronousCommand wcm:action="add">
                     <CommandLine>DoNotOpenServerManagerAtLogon = true</CommandLine>
                     <Order>11</Order>
-                </SynchronousCommand>
+                </SynchronousCommand> -->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
                     <Description>Prepare for Ansible </Description>
-                    <Order>20</Order>
+                    <Order>2</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>powerShell &quot;Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe</CommandLine>
+                    <CommandLine>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</CommandLine>
+                    <Description>Download VMWare tools </Description>
+                    <Order>3</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>C:\Windows\Temp\setup64.exe /s /v "/qn REBOOT=R" /l C:\Windows\Temp\vmware_tools_install.log</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>4</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>netsh advfirewall firewall add rule name=ICMP protocol=icmpv4 dir=in action=allow</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>5</Order>
+                </SynchronousCommand>
+
+                <!-- <SynchronousCommand wcm:action="add">
+                    <CommandLine>powerShell &quot;Invoke-WebRequest -Uri https://packages.vmware.com/tools/releases/latest/windows/x64/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe</CommandLine>
                     <Description>Download VMware Tools</Description>
                     <Order>15</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe /S /v&quot;/qn REBOOT=R</CommandLine>
+                    <CommandLine>C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe /S /v&quot;/qn REBOOT=R&quot;</CommandLine>
                     <Description>install VMware tools</Description>
                     <Order>16</Order>
-                </SynchronousCommand>
+                </SynchronousCommand> -->
             </FirstLogonCommands>
         </component>
     </settings>
@@ -138,6 +154,11 @@
         </component>
         <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <FirewallGroups>
+                <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
+                    <Active>true</Active>
+                    <Group>Remote Desktop</Group>
+                    <Profile>all</Profile>
+                </FirewallGroup>
                 <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
                     <Active>true</Active>
                     <Group>Remote Desktop</Group>
