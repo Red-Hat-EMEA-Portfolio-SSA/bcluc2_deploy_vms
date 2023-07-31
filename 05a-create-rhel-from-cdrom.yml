@@ -28,7 +28,6 @@
     my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
-
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
@@ -72,17 +71,17 @@
           - _temporary_rhelvm_do_not_delete
 
     - name: Print out infos on my_vm
-      debug:
+      ansible.builtin.debug:
         var: my_vm
       when: debug | default ('false') | bool
 
     - name: Collect information about a specific VM
       vmware.vmware_rest.vcenter_vm_info:
-        vm: '{{ my_vm.value[0].vm }}'
+        vm: "{{ my_vm.value[0].vm }}"
       register: my_vm_info
-    
+
     - name: Print out infos on my_vm_info
-      debug:
+      ansible.builtin.debug:
         var: my_vm_info
       when: debug | default ('false') | bool
 
@@ -93,56 +92,56 @@
 
     - name: Wait for guest network interfaces information to be available
       vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
-        vm: '{{ my_vm_info.id }}'
+        vm: "{{ my_vm_info.id }}"
       register: my_vm_interfaceinfo
-      retries: 60 
+      retries: 60
       delay: 10 # seconds
       until:
-        - my_vm_interfaceinfo.value[0] is defined 
+        - my_vm_interfaceinfo.value[0] is defined
 
     - name: Print out infos on my_vm_interfaceinfo
-      debug:
+      ansible.builtin.debug:
         var: my_vm_interfaceinfo
       when: debug | default ('false') | bool
 
-    - name: extract ip address
+    - name: Extract ip address
       ansible.builtin.set_fact:
         my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
-    
+
     - name: Print out ip address
-      debug:
+      ansible.builtin.debug:
         var: my_vm_ip
       when: debug | default ('false') | bool
 
     - name: Add Host to inventory
       add_host:
         name: "_temporary_rhelvm"
-        ansible_host: "{{ my_vm_ip  }}"
+        ansible_host: "{{ my_vm_ip }}"
         # ansible_user:
         # ansible_password:
       when: awx_inventory_name is not defined
 
-    - name: add hosts to static inventory 
+    - name: add hosts to static inventory
       ansible.controller.host:
-        #controller_host: "{{ lookup('ENV','CONTROLLER_HOST') }}"
-        #controller_username: "{{ lookup('ENV','CONTROLLER_USERNAME') }}"
-        #controller_password: "{{ lookup('ENV', 'CONTROLLER_PASSWORD') }}"
-        validate_certs: no
-    
+        # controller_host: "{{ lookup('ENV','CONTROLLER_HOST') }}"
+        # controller_username: "{{ lookup('ENV','CONTROLLER_USERNAME') }}"
+        # controller_password: "{{ lookup('ENV', 'CONTROLLER_PASSWORD') }}"
+        validate_certs: false
+
         inventory: "{{ awx_inventory_name }}"
         name: "_temporary_rhelvm"
         enabled: true
         state: present
         variables:
-          ansible_host: "{{ my_vm_ip  }}"
+          ansible_host: "{{ my_vm_ip }}"
       when: awx_inventory_name is defined
 
-    - name: wait for ssh to be ready
+    - name: Wait for ssh to be ready
       ansible.builtin.wait_for:
         port: 22
         host: "{{ my_vm_ip }}"
         delay: 10 # seconds
-        timeout: 600 
+        timeout: 600
 
     #- name: Power off VM
     #  vmware.vmware_rest.vcenter_vm_power:

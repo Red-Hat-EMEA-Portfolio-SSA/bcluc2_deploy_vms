@@ -7,9 +7,9 @@
   vars:
     # Directories and files
     my_flavor: win
-    my_original_iso_full_filename: "{{ flavor[my_flavor].my_original_iso_full_filename }}"
-    my_custom_iso: "{{ flavor[my_flavor].my_custom_iso }}"
-    my_os_type: "{{ flavor[my_flavor].my_os_type }}"
+    my_original_iso_full_filename: "{{ flavor[my_flavor].my_original_iso_full_filename }}"
+    my_custom_iso: "{{ flavor[my_flavor].my_custom_iso }}"
+    my_os_type: "{{ flavor[my_flavor].my_os_type }}"
 
     my_working_dir: /tmp/working-dir
     my_mnt_dir: /tmp/mnt-dir

@@ -15,7 +15,6 @@
   gather_facts: false
 
   vars:
-
     # Vars created by VMware admin
     my_flavor: "win"
 
@@ -29,7 +28,6 @@
     my_iso_file_fullname: "{{ my_vcenter_isofile_dir_with_ds }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
-
     - name: Boot virtual machine from our custom ISO image in CDROM
       vmware.vmware_rest.vcenter_vm:
         placement:
@@ -74,11 +72,11 @@
 
     - name: Collect information about a specific VM
       vmware.vmware_rest.vcenter_vm_info:
-        vm: '{{ my_vm.value[0].vm }}'
+        vm: "{{ my_vm.value[0].vm }}"
       register: my_vm_info
-    
+
     - name: Print out infos on my_vm_info
-      debug:
+      ansible.builtin.debug:
         var: my_vm_info
       when: debug | default ('false') | bool
 
@@ -87,42 +85,41 @@
         state: start
         vm: "{{ my_vm.value[0].vm }}"
 
-#     - name: Sleep for 20 minutes so the machine can finish the install
-#        ansible.builtin.wait_for:
-#          timeout: 1200
+    #     - name: Sleep for 20 minutes so the machine can finish the install
+    #        ansible.builtin.wait_for:
+    #          timeout: 1200
 
     - name: Wait for power state to be operations_ready
       vmware.vmware_rest.vcenter_vm_guest_power_info:
-        vm: '{{ my_vm_info.id }}'
+        vm: "{{ my_vm_info.id }}"
       register: my_vm_powerstate
-      retries: 180   # 30 minutes
+      retries: 180 # 30 minutes
       delay: 10 # seconds
       until:
         - my_vm_powerstate.value is defined
-        - my_vm_powerstate.value.operations_ready 
-        - my_vm_powerstate.value.state == "RUNNING" 
-
+        - my_vm_powerstate.value.operations_ready
+        - my_vm_powerstate.value.state == "RUNNING"
 
     - name: Wait for guest network interfaces information to be available
       vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
-        vm: '{{ my_vm_info.id }}'
+        vm: "{{ my_vm_info.id }}"
       register: my_vm_interfaceinfo
-      retries: 60 
+      retries: 60
       delay: 10 # seconds
       until:
-        - my_vm_interfaceinfo.value[0] is defined 
+        - my_vm_interfaceinfo.value[0] is defined
 
     - name: Print out infos on my_vm_interfaceinfo
-      debug:
+      ansible.builtin.debug:
         var: my_vm_interfaceinfo
       when: debug | default ('false') | bool
 
     - name: extract ip address
       ansible.builtin.set_fact:
-        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
-    
+        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
+
     - name: Print out ip address
-      debug:
+      ansible.builtin.debug:
         var: my_vm_ip
       when: debug | default ('false') | bool
 
@@ -134,41 +131,40 @@
         # ansible_password:
       when: awx_inventory_name is not defined
 
-    - name: add hosts to static inventory 
+    - name: add hosts to static inventory
       ansible.controller.host:
         # controller_host: "{{ controller_host }}"
         # controller_username: "{{ controller_username }}"
         # controller_password: "{{ controller_password }}"
-        validate_certs: no
-    
-        inventory: "{{ awx_inventory_name }}"
+        validate_certs: false
+
+        inventory: "{{ awx_inventory_name }}"
         name: "_temporary_winvm"
         enabled: true
         state: present
         variables:
-          ansible_host: "{{ my_vm_ip  }}"
+          ansible_host: "{{ my_vm_ip }}"
       when: awx_inventory_name is defined
 
-# no ssh on windows
-#     - name: wait for ssh to be ready
-#       ansible.builtin.wait_for:
-#         port: 22
-#         host: "{{ my_vm_ip }}"
-#         delay: 10 # seconds
-#         timeout: 600 
+    # no ssh on windows
+    #     - name: wait for ssh to be ready
+    #       ansible.builtin.wait_for:
+    #         port: 22
+    #         host: "{{ my_vm_ip }}"
+    #         delay: 10 # seconds
+    #         timeout: 600
 
     - name: List the cdrom devices on the guest
       vmware.vmware_rest.vcenter_vm_hardware_cdrom_info:
-        vm: '{{ my_vm.value[0].vm }}'
+        vm: "{{ my_vm.value[0].vm }}"
       register: cdrom_guest
 
     - name: Detach CDROM from VM
       vmware.vmware_rest.vcenter_vm_hardware_cdrom:
-        vm: '{{ my_vm.value[0].vm }}'
+        vm: "{{ my_vm.value[0].vm }}"
         cdrom: "{{ cdrom_guest.value[0].cdrom }}"
         state: absent
       when: cdrom_template_vm.value[0] is defined
-
 
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
@@ -198,12 +194,11 @@
     - name: Create a template from VM in the library
       vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
         name: "{{ my_template_name }}"
-        library: '{{ my_content_library[0].id }}'
-        source_vm: '{{ my_vm.value[0].vm }}'
+        library: "{{ my_content_library[0].id }}"
+        source_vm: "{{ my_vm.value[0].vm }}"
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
-
 #    - name: Delete VM
 #      vmware.vmware_rest.vcenter_vm:
 #        vm: '{{ my_vm.value[0].vm }}'

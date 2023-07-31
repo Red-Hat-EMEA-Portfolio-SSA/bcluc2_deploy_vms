@@ -4,13 +4,11 @@
   become: false
 
   vars:
-
     my_flavor: "rhel"
     my_source_file_full_filename: "{{ flavor[my_flavor].my_custom_iso }}"
     my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
-
     - name: Copy file from host to DataStore
       community.vmware.vsphere_copy:
         hostname: "{{ lookup('env', 'VMWARE_HOST') }}"

@@ -25,7 +25,6 @@
         my_vcenter_vm_parent_folder_name: /vm/vms
         my_vcenter_cluster_name: bcl-cluster
 
-
   tasks:
     - name: Clone the template
       community.vmware.vmware_guest:
@@ -59,7 +58,7 @@
       when: debug | default ('false') | bool
 
     - name: Add RHEL Hosts to inventory
-      add_host:
+      ansible.builtin.add_host:
         name: "{{ item.instance.hw_name }}"
         ansible_host: "{{ item.instance.ipv4 }}"
         groups: "{{ item.instance.hw_guest_id }}"
@@ -69,9 +68,9 @@
       when:
         - awx_inventory_name is not defined
         - item.instance.hw_guest_id is 'rhel9_64Guest'
-  
+
     - name: Add WIN Hosts to inventory
-      add_host:
+      ansible.builtin.add_host:
         name: "{{ item.instance.hw_name }}"
         ansible_host: "{{ item.instance.ipv4 }}"
         ansible_connection: winrm
@@ -83,11 +82,10 @@
       when:
         - awx_inventory_name is not defined
         - item.instance.hw_guest_id is 'windows2019srv_64Guest'
-  
-    - name: add hosts to static inventory 
+
+    - name: Add hosts to static inventory
       ansible.controller.host:
-        validate_certs: no
-    
+        validate_certs: false
         inventory: "{{ awx_inventory_name }}"
         name: "{{ item.instance.hw_name }}"
         enabled: true
@@ -95,29 +93,27 @@
         variables:
           ansible_host: "{{ item.instance.ipv4 }}"
           group_name: "{{ item.instance.hw_guest_id }}"
-      when: 
+      when:
         - awx_inventory_name is defined
       loop: "{{ my_vms_created.results }}"
 
-    - name: create RHEL host-groups
+    - name: Create RHEL host-groups
       # will create same group more than once...
       ansible.controller.group:
-        validate_certs: no
-    
+        validate_certs: false
         inventory: "{{ awx_inventory_name }}"
         name: "{{ item.instance.hw_guest_id }}"
         state: present
       delegate_to: localhost
-      when: 
+      when:
         - awx_inventory_name is defined
         - item.instance.hw_guest_id is 'rhel9_64Guest'
       loop: "{{ my_vms_created.results }}"
 
-    - name: create WIN host-groups
+    - name: Create WIN host-groups
       # will create same group more than once...
       ansible.controller.group:
-        validate_certs: no
-    
+        validate_certs: false
         inventory: "{{ awx_inventory_name }}"
         name: "{{ item.instance.hw_guest_id }}"
         state: present
@@ -130,16 +126,15 @@
         - item.instance.hw_guest_id is 'windows2019srv_64Guest'
       loop: "{{ my_vms_created.results }}"
 
-    - name: add hosts to groups
+    - name: Add hosts to groups
       ansible.controller.group:
-        validate_certs: no
-    
+        validate_certs: false
         inventory: "{{ awx_inventory_name }}"
         name: "{{ item.instance.hw_guest_id }}"
         hosts:
           - "{{ item.instance.hw_name }}"
-        preserve_existing_hosts: True
-        #preserve_existing_children: True
+        preserve_existing_hosts: true
+        # preserve_existing_children: True
         state: present
       delegate_to: localhost
       when: awx_inventory_name is defined

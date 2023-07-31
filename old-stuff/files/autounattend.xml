@@ -1,124 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<unattend
-	xmlns="urn:schemas-microsoft-com:unattend"
-	xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
-	<settings pass="offlineServicing"></settings>
-	<settings pass="windowsPE">
-		<component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-			<SetupUILanguage>
-				<UILanguage>en-US</UILanguage>
-			</SetupUILanguage>
-			<InputLocale>0409:00000409</InputLocale>
-			<SystemLocale>en-US</SystemLocale>
-			<UILanguage>en-US</UILanguage>
-			<UserLocale>en-US</UserLocale>
-		</component>
-		<component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-			<DiskConfiguration>
-				<WillShowUI>OnError</WillShowUI>
-				<Disk>
-					<DiskID>0</DiskID>
-					<WillWipeDisk>true</WillWipeDisk>
-					<CreatePartitions>
-						<CreatePartition>
-							<Order>1</Order>
-							<Type>EFI</Type>
-							<Size>100</Size>
-						</CreatePartition>
-						<CreatePartition>
-							<Order>2</Order>
-							<Type>Primary</Type>
-							<Size>200</Size>
-						</CreatePartition>
-						<CreatePartition>
-							<Order>3</Order>
-							<Type>MSR</Type>
-							<Size>128</Size>
-						</CreatePartition>
-						<CreatePartition>
-							<Order>4</Order>
-							<Type>Primary</Type>
-							<Extend>true</Extend>
-						</CreatePartition>
-					</CreatePartitions>
-					<ModifyPartitions>
-						<ModifyPartition>
-							<Order>1</Order>
-							<PartitionID>1</PartitionID>
-							<Format>FAT32</Format>
-							<Label>System</Label>
-						</ModifyPartition>
-						<ModifyPartition>
-							<Order>2</Order>
-							<PartitionID>2</PartitionID>
-							<Format>NTFS</Format>
-							<Label>Recovery</Label>
-						</ModifyPartition>
-						<ModifyPartition>
-							<Order>3</Order>
-							<PartitionID>4</PartitionID>
-							<Format>NTFS</Format>
-							<Label>Windows</Label>
-						</ModifyPartition>
-					</ModifyPartitions>
-				</Disk>
-			</DiskConfiguration>
-			<ImageInstall>
-				<OSImage>
-					<InstallTo>
-						<DiskID>0</DiskID>
-						<PartitionID>4</PartitionID>
-					</InstallTo>
-					<InstallFrom>
-						<MetaData wcm:action="add">
-							<Key>/Image/Index</Key>
-							<Value>2</Value>
-						</MetaData>
-					</InstallFrom>
-				</OSImage>
-			</ImageInstall>
-			<UserData>
-				<AcceptEula>true</AcceptEula>
-			</UserData>
-		</component>
-	</settings>
-	<settings pass="generalize"></settings>
-	<settings pass="specialize"></settings>
-	<settings pass="auditSystem"></settings>
-	<settings pass="auditUser"></settings>
-	<settings pass="oobeSystem">
-		<component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-			<InputLocale>0409:00000409</InputLocale>
-			<SystemLocale>en-US</SystemLocale>
-			<UILanguage>en-US</UILanguage>
-			<UserLocale>en-US</UserLocale>
-		</component>
-		<component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-			<UserAccounts>
-				<AdministratorPassword>
-					<Value>redhat</Value>
-					<PlainText>true</PlainText>
-				</AdministratorPassword>
-				<LocalAccounts>
-					<LocalAccount wcm:action="add">
-						<Name>admin</Name>
-						<Group>Administrators</Group>
-						<Password>
-							<Value>redhat</Value>
-							<PlainText>true</PlainText>
-						</Password>
-					</LocalAccount>
-					<LocalAccount wcm:action="add">
-						<Name>sysadmin</Name>
-						<Group>Users</Group>
-						<Password>
-							<Value>redhat</Value>
-							<PlainText>true</PlainText>
-						</Password>
-					</LocalAccount>
-				</LocalAccounts>
-			</UserAccounts>
-			<AutoLogon>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserData>
+                <AcceptEula>true</AcceptEula>
+            </UserData>
+            <ImageInstall>
+                <OSImage>
+                    <InstallFrom>
+                        <MetaData wcm:action="add">
+                            <Key>/IMAGE/NAME</Key>
+                            <Value>Windows Server 2019 SERVERSTANDARD</Value>
+                        </MetaData>
+                    </InstallFrom>
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>4</PartitionID>
+                    </InstallTo>
+                </OSImage>
+            </ImageInstall>
+            <DiskConfiguration>
+                <WillShowUI>OnError</WillShowUI>
+                <Disk>
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                    <CreatePartitions>
+                        <CreatePartition>
+                            <Order>1</Order>
+                            <Type>EFI</Type>
+                            <Size>100</Size>
+                        </CreatePartition>
+                        <CreatePartition>
+                            <Order>2</Order>
+                            <Type>Primary</Type>
+                            <Size>200</Size>
+                        </CreatePartition>
+                        <CreatePartition>
+                            <Order>3</Order>
+                            <Type>MSR</Type>
+                            <Size>128</Size>
+                        </CreatePartition>
+                        <CreatePartition>
+                            <Order>4</Order>
+                            <Type>Primary</Type>
+                            <Extend>true</Extend>
+                        </CreatePartition>
+                    </CreatePartitions>
+                    <ModifyPartitions>
+                        <ModifyPartition>
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                            <Format>FAT32</Format>
+                            <Label>System</Label>
+                        </ModifyPartition>
+                        <ModifyPartition>
+                            <Order>2</Order>
+                            <PartitionID>2</PartitionID>
+                            <Format>NTFS</Format>
+                            <Label>Recovery</Label>
+                        </ModifyPartition>
+                        <ModifyPartition>
+                            <Order>3</Order>
+                            <PartitionID>4</PartitionID>
+                            <Format>NTFS</Format>
+                            <Label>Windows</Label>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                </Disk>
+            </DiskConfiguration>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>redhat</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
+            <AutoLogon>
 				<Password>
 					<Value>redhat</Value>
 					<PlainText>true</PlainText>
@@ -127,17 +93,83 @@
 				<Username>Administrator</Username>
 				<LogonCount>1</LogonCount>
 			</AutoLogon>
-			<FirstLogonCommands>
-				<SynchronousCommand wcm:action="add">
-					<Order>1</Order>
-					<CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
-				</SynchronousCommand>
-			</FirstLogonCommands>
-			<OOBE>
-				<ProtectYourPC>3</ProtectYourPC>
-				<HideEULAPage>true</HideEULAPage>
-				<HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-			</OOBE>
-		</component>
-	</settings>
+            <FirstLogonCommands>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c reg add "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"</CommandLine>
+                    <Description>Disable network discovery prompt for all users</Description>
+                    <Order>1</Order>
+                </SynchronousCommand>
+                <!-- <SynchronousCommand wcm:action="add">
+                    <CommandLine>DoNotOpenServerManagerAtLogon = true</CommandLine>
+                    <Order>11</Order>
+                </SynchronousCommand> -->
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
+                    <Description>Prepare for Ansible </Description>
+                    <Order>2</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</CommandLine>
+                    <Description>Download VMWare tools </Description>
+                    <Order>3</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>C:\Windows\Temp\setup64.exe /s /v "/qn REBOOT=R" /l C:\Windows\Temp\vmware_tools_install.log</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>4</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>netsh advfirewall firewall add rule name=ICMP protocol=icmpv4 dir=in action=allow</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>5</Order>
+                </SynchronousCommand>
+
+                <!-- <SynchronousCommand wcm:action="add">
+                    <CommandLine>powerShell &quot;Invoke-WebRequest -Uri https://packages.vmware.com/tools/releases/latest/windows/x64/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe</CommandLine>
+                    <Description>Download VMware Tools</Description>
+                    <Order>15</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>C:\Windows\temp\VMware-tools-12.2.5-21855600-x86_64.exe /S /v&quot;/qn REBOOT=R&quot;</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>16</Order>
+                </SynchronousCommand> -->
+            </FirstLogonCommands>
+        </component>
+    </settings>
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-ServerManager-SvrMgrNc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DoNotOpenServerManagerAtLogon>true</DoNotOpenServerManagerAtLogon>
+        </component>
+        <component name="Microsoft-Windows-IE-ESC" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <IEHardenAdmin>false</IEHardenAdmin>
+            <IEHardenUser>false</IEHardenUser>
+        </component>
+        <component name="Microsoft-Windows-IE-InternetExplorer" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DisableFirstRunWizard>true</DisableFirstRunWizard>
+            <Help_Page>about:blank</Help_Page>
+        </component>
+        <component name="Microsoft-Windows-TerminalServices-LocalSessionManager" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <fDenyTSConnections>false</fDenyTSConnections>
+        </component>
+        <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <FirewallGroups>
+                <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
+                    <Active>true</Active>
+                    <Group>Remote Desktop</Group>
+                    <Profile>all</Profile>
+                </FirewallGroup>
+                <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
+                    <Active>true</Active>
+                    <Group>Remote Desktop</Group>
+                    <Profile>all</Profile>
+                </FirewallGroup>
+            </FirewallGroups>
+        </component>
+        <component name="Microsoft-Windows-TerminalServices-RDP-WinStationExtensions" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SecurityLayer>1</SecurityLayer>
+            <UserAuthentication>0</UserAuthentication>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="wim:c:/win_unattend_xml/install.wim#Windows Server 2019 SERVERSTANDARD" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>

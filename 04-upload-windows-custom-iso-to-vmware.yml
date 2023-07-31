@@ -9,7 +9,6 @@
     my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
-
     - name: Copy file from host to DataStore
       community.vmware.vsphere_copy:
         hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
