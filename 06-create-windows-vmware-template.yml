@@ -143,7 +143,13 @@
         state: present
         variables:
           ansible_host: "{{ my_vm_ip }}"
+          ansible_connection: winrm
+          ansible_winrm_transport: basic
       when: awx_inventory_name is defined
+
+    - name: Wait until configuration ends
+      ansible.builtin.pause:
+        minutes: 1
 
     # no ssh on windows
     #     - name: wait for ssh to be ready
