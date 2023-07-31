@@ -22,7 +22,7 @@
 
 - name: Unmount original ISO
   become: true
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ my_mnt_dir }}"
     state: unmounted
 
@@ -31,6 +31,7 @@
   ansible.builtin.template:
     src: autounattend.xml.j2
     dest: "{{ my_working_dir }}/autounattend.xml"
+    mode: "0755"
 
 # - name: Copy autounattend.xml file from role
 #   become: true
@@ -51,20 +52,21 @@
     remote_src: true
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    mode: "0755"
   loop:
     - src: "{{ my_working_dir }}/efi/microsoft/boot/efisys_noprompt.bin"
       dest: "{{ my_working_dir }}/efi/microsoft/boot/efisys.bin"
     - src: "{{ my_working_dir }}/efi/microsoft/boot/cdboot_noprompt.efi"
       dest: "{{ my_working_dir }}/efi/microsoft/boot/cdboot.efi"
 
-- name: Generate ISO from the 'windows_iso' directory 
+- name: Generate ISO from the 'windows_iso' directory
   ansible.builtin.command: >
     genisoimage -no-emul-boot -b "boot/etfsboot.com" -boot-load-size 8
-    -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin" 
+    -eltorito-alt-boot -no-emul-boot -e "efi/microsoft/boot/efisys.bin"
     -boot-load-size 1 -iso-level 4 -o {{ my_custom_iso }} .
   args:
     chdir: "{{ my_working_dir }}"
-#-allow-limited-size
+# -allow-limited-size
 
 - name: Implant md5 to ISO file
   become: true

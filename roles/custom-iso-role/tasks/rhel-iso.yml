@@ -25,6 +25,7 @@
   ansible.builtin.file:
     path: "{{ my_working_dir }}"
     state: directory
+    mode: "0755"
 
 - name: Copy ISO content to working directory
   become: true
@@ -32,10 +33,11 @@
     src: "{{ my_mnt_dir }}/"
     dest: "{{ my_working_dir }}/"
     remote_src: true
+    mode: "0755"
 
 - name: Unmount original ISO
   become: true
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ my_mnt_dir }}"
     state: unmounted
 
@@ -44,18 +46,21 @@
   ansible.builtin.template:
     src: ks.cfg.j2
     dest: "{{ my_working_dir }}/ks.cfg"
+    mode: "0755"
 
 - name: Create isolinux.cfg file from template
   become: true
   ansible.builtin.template:
     src: isolinux.cfg.j2
     dest: "{{ my_working_dir }}/isolinux/isolinux.cfg"
+    mode: "0755"
 
 - name: Create grub.cfg file from template
   become: true
   ansible.builtin.template:
     src: grub.cfg.j2
     dest: "{{ my_working_dir }}/EFI/BOOT/grub.cfg"
+    mode: "0755"
 
 - name: Create customized RHEL iso image
   become: true

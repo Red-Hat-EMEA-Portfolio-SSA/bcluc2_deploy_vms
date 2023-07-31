@@ -112,32 +112,31 @@
     - name: Print out infos on my_vm_interfaceinfo
       ansible.builtin.debug:
         var: my_vm_interfaceinfo
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
-    - name: extract ip address
+    - name: Extract ip address
       ansible.builtin.set_fact:
         my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[0].ip_address }}"
 
     - name: Print out ip address
       ansible.builtin.debug:
         var: my_vm_ip
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
     - name: Add Host to inventory
-      add_host:
+      ansible.builtin.add_host:
         name: "_temporary_winvm"
-        ansible_host: "{{ my_vm_ip  }}"
+        ansible_host: "{{ my_vm_ip }}"
         # ansible_user:
         # ansible_password:
       when: awx_inventory_name is not defined
 
-    - name: add hosts to static inventory
+    - name: Add hosts to static inventory
       ansible.controller.host:
         # controller_host: "{{ controller_host }}"
         # controller_username: "{{ controller_username }}"
         # controller_password: "{{ controller_password }}"
         validate_certs: false
-
         inventory: "{{ awx_inventory_name }}"
         name: "_temporary_winvm"
         enabled: true
@@ -199,7 +198,8 @@
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
-#    - name: Delete VM
-#      vmware.vmware_rest.vcenter_vm:
-#        vm: '{{ my_vm.value[0].vm }}'
-#        state: absent
+
+    - name: Delete VM
+      vmware.vmware_rest.vcenter_vm:
+        vm: "{{ my_vm.value[0].vm }}"
+        state: absent

@@ -46,7 +46,7 @@
     - name: Print result of vm creation
       ansible.builtin.debug:
         var: my_vms_created
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
     - name: Print add Hosts to inventory parameters
       ansible.builtin.debug:
@@ -55,7 +55,7 @@
           ansible_host: "{{ item.instance.ipv4 }}"
           groups: "{{ item.instance.hw_guest_id }}"
       loop: "{{ my_vms_created.results }}"
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
     - name: Add RHEL Hosts to inventory
       ansible.builtin.add_host:
