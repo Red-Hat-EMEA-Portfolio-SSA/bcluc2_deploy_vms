@@ -104,20 +104,20 @@
                     <Description>Prepare for Ansible </Description>
                     <Order>2</Order>
                 </SynchronousCommand>
-                <!-- <SynchronousCommand wcm:action="add">
-                    <CommandLine>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</CommandLine>
-                    <Description>Download VMWare tools </Description>
-                    <Order>3</Order>
-                </SynchronousCommand> -->
-                <!-- <SynchronousCommand wcm:action="add">
-                    <CommandLine>C:\Windows\Temp\setup64.exe /s /v "/qn REBOOT=R" /l C:\Windows\Temp\vmware_tools_install.log</CommandLine>
-                    <Description>install VMware tools</Description>
-                    <Order>4</Order>
-                </SynchronousCommand> -->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>netsh advfirewall firewall add rule name=ICMP protocol=icmpv4 dir=in action=allow</CommandLine>
                     <Description>install VMware tools</Description>
                     <Order>3</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</CommandLine>
+                    <Description>Download VMWare tools </Description>
+                    <Order>4</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>C:\Windows\Temp\setup64.exe /s /v "/qn REBOOT=R" /l C:\Windows\Temp\vmware_tools_install.log</CommandLine>
+                    <Description>install VMware tools</Description>
+                    <Order>5</Order>
                 </SynchronousCommand>
             </FirstLogonCommands>
         </component>
@@ -136,21 +136,6 @@
         </component>
         <component name="Microsoft-Windows-TerminalServices-LocalSessionManager" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <fDenyTSConnections>false</fDenyTSConnections>
-        </component>
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Path>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</Path>
-                    <Description>Download VMWare tools setup</Description>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Path>C:\Windows\Temp\setup64.exe /s /v "/qn REBOOT=ReallySuppress" /l C:\Windows\Temp\vmware_tools_install.log</Path>
-                    <Description>Install VMWare tools</Description>
-                    <WillReboot>Always</WillReboot>
-                </RunSynchronousCommand>
-            </RunSynchronous>
         </component>
         <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <FirewallGroups>
