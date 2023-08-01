@@ -139,6 +139,9 @@
       when: awx_inventory_name is defined
 
     - name: Wait for ssh to be ready
+      ansible.builtin.command: ssh "{{ my_vm_ip }}"
+
+    - name: Wait for ssh to be ready
       ansible.builtin.wait_for:
         port: 22
         host: "{{ my_vm_ip }}"
