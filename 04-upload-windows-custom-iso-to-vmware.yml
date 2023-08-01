@@ -19,4 +19,3 @@
         datacenter: "{{ my_vcenter_datacenter_name }}"
         datastore: "{{ my_vcenter_datastore_name }}"
         path: "{{ my_destination_filename }}"
-      delegate_to: bastion

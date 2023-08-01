@@ -18,6 +18,4 @@
         src: "{{ my_source_file_full_filename }}"
         datacenter: "{{ my_vcenter_datacenter_name }}"
         datastore: "{{ my_vcenter_datastore_name }}"
-        dest: "{{ my_destination_filename }}"
-        # timeout: 100
-      delegate_to: bastion
+        path: "{{ my_destination_filename }}"
