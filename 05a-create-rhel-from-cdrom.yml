@@ -106,7 +106,10 @@
 
     - name: Extract ip address
       ansible.builtin.set_fact:
-        my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[1].ip_address }}"
+        # my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[1].ip_address }}"
+        my_vm_ip: "{{ my_vm_interfaceinfo | community.general.json_query(ip_query) }}"
+      vars:
+        ip_query: value[0].ip.ip_addresses[?state=='PREFERRED'].ip_address
 
     - name: Print out ip address
       ansible.builtin.debug:
