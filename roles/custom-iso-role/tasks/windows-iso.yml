@@ -1,7 +1,7 @@
 ---
 - name: Mount installation ISO read-only
   become: true
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ my_mnt_dir }}"
     src: "{{ my_original_iso_full_filename }}"
     fstype: udf
@@ -12,6 +12,7 @@
   ansible.builtin.file:
     path: "{{ my_working_dir }}"
     state: directory
+    mode: "0755"
 
 - name: Copy ISO content to working directory
   ansible.builtin.copy:
