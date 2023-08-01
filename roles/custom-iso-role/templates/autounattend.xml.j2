@@ -105,7 +105,7 @@
                     <Order>2</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
+                    <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://{{ hostvars['bastion_host'].ansible_host }}/config/winrm_config.ps1)</CommandLine>
                     <Description>Prepare for Ansible </Description>
                     <Order>3</Order>
                 </SynchronousCommand>
