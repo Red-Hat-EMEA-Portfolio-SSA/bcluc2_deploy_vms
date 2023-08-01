@@ -76,15 +76,15 @@
       ansible.builtin.set_fact:
         my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
 
-    - name: print my_content_library_created
+    - name: Print my_content_library_created
       ansible.builtin.debug:
         var: my_content_library_created
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
-    - name: print my_content_library
+    - name: Print my_content_library
       ansible.builtin.debug:
         var: my_content_library
-      when: debug | default ('false') | bool
+      when: debug | default('false') | bool
 
     - name: Create a template from VM in the library
       vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
