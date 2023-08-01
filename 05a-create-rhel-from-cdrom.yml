@@ -107,7 +107,7 @@
     - name: Extract ip address
       ansible.builtin.set_fact:
         # my_vm_ip: "{{ my_vm_interfaceinfo.value[0].ip.ip_addresses[1].ip_address }}"
-        my_vm_ip: "{{ my_vm_interfaceinfo | community.general.json_query(ip_query) }}"
+        my_vm_ip: "{{ my_vm_interfaceinfo | community.general.json_query(ip_query) | first }}"
       vars:
         ip_query: "value[0].ip.ip_addresses[?state=='PREFERRED'].ip_address"
 
@@ -137,9 +137,6 @@
         variables:
           ansible_host: "{{ my_vm_ip }}"
       when: awx_inventory_name is defined
-
-    - name: Wait for ssh to be ready
-      ansible.builtin.command: ssh "{{ my_vm_ip }}"
 
     - name: Wait for ssh to be ready
       ansible.builtin.wait_for:
