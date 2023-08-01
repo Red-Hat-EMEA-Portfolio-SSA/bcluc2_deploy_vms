@@ -33,12 +33,6 @@
     dest: "{{ my_working_dir }}/autounattend.xml"
     mode: "0755"
 
-# - name: Copy autounattend.xml file from role
-#   become: true
-#   ansible.builtin.copy:
-#     src: files/autounattend.xml
-#     dest: "{{ my_working_dir }}/autounattend.xml"
-
 - name: Remove unnecessary files
   ansible.builtin.file:
     path: "{{ item }}"

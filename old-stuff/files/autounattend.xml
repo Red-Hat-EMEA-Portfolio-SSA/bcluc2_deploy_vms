@@ -100,15 +100,16 @@
                     <Order>1</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
-                    <Description>Prepare for Ansible </Description>
+                    <CommandLine>netsh advfirewall firewall add rule name=ICMP protocol=icmpv4 dir=in action=allow</CommandLine>
+                    <Description>install VMware tools</Description>
                     <Order>2</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>netsh advfirewall firewall add rule name=ICMP protocol=icmpv4 dir=in action=allow</CommandLine>
-                    <Description>install VMware tools</Description>
+                    <CommandLine>powershell -ExecutionPolicy ByPass Invoke-Expression (Invoke-WebRequest -Uri http://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1)</CommandLine>
+                    <Description>Prepare for Ansible </Description>
                     <Order>3</Order>
                 </SynchronousCommand>
+
 <!--                 <SynchronousCommand wcm:action="add">
                     <CommandLine>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://bastion.bcl.redhat.hpecic.com/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</CommandLine>
                     <Description>Download VMWare tools </Description>
@@ -150,7 +151,7 @@
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
-                    <Path>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://10.6.55.4/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</Path>
+                    <Path>powershell -NoLogo -Command "Invoke-WebRequest -Uri http://{{ hostvars['bastion_host'].ansible_host }}/isos/VMware-tools-12.2.5-21855600-x86_64.exe -OutFile C:\Windows\Temp\setup64.exe"</Path>
                     <Description>Download tools deployment script</Description>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
