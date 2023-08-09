@@ -94,7 +94,7 @@
       vmware.vmware_rest.vcenter_vm_guest_networking_interfaces_info:
         vm: "{{ my_vm_info.id }}"
       register: my_vm_interfaceinfo
-      retries: 60
+      retries: 120
       delay: 10 # seconds
       until:
         - my_vm_interfaceinfo.value[0] is defined
