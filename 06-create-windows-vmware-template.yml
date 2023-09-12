@@ -189,6 +189,7 @@
           - datastore_id: "{{ lookup('vmware.vmware_rest.datastore_moid', '/{{ my_vcenter_datacenter_name }}/datastore/{{ my_vcenter_datastore_name }}') }}"
             type: DATASTORE
         state: present
+      register: my_content_library_created
 
     - name: List all Local Content Library
       register: all_content_libraries
@@ -198,10 +199,21 @@
       ansible.builtin.set_fact:
         my_content_library: "{{ all_content_libraries.value | selectattr('name', 'equalto', my_content_library_name) }}"
 
+    - name: Print my_content_library_created
+      ansible.builtin.debug:
+        var: my_content_library_created
+      when: debug | default('false') | bool
+
+    - name: Print my_content_library
+      ansible.builtin.debug:
+        var: my_content_library
+      when: debug | default('false') | bool
+
     - name: Create a template from VM in the library
       vmware.vmware_rest.vcenter_vmtemplate_libraryitems:
         name: "{{ my_template_name }}"
-        library: "{{ my_content_library[0].id }}"
+        # library: "{{ my_content_library[0].id }}"
+        library: "{{ my_content_library_created.id }}"
         source_vm: "{{ my_vm.value[0].vm }}"
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
