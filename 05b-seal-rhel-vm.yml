@@ -8,7 +8,7 @@
 
   tasks:
     - name: Register subscription manager to CDN in order to install rpms
-      redhat_subscription:
+      community.general.redhat_subscription:
         state: present
         username: "{{ rhsm_username }}"
         password: "{{ rhsm_password }}"
