@@ -32,8 +32,10 @@
     # my_dns_server: 8.8.8.8 # Optional, only to be used if my_network_bootprotocol is "static"
 
     # Optional Red Hat CDN user and password for registering with Insights
-    # my_rhn_user: myuser
-    # my_rhn_pass: mypassword
+    my_rhn_user: "{{ rhsm_username }}"
+    my_rhn_pass: "{{ rhsm_password }}"
+    # passwords are in secrets.yml and need to be handed over at cmd-line with -e @secrets.yml
+    # OR in AAP there is a credential type create rhsm and a credential rhsm whihc needs to be added to the job
 
     # Optional, users to be created. You can add as many users as you want by growing the dictionary with the same structure
     # Every entry on the dictionary must have "name" and "password" fields, optionally you can define additional groups for
