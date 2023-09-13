@@ -10,7 +10,7 @@
 
   tasks:
     - name: DEBU Copy file from host to DataStore
-      ansible.buitlin.debug:
+      ansible.builtin.debug:
         msg: | 
           hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
           username: "{{ lookup('env', 'VMWARE_USER') }}"
