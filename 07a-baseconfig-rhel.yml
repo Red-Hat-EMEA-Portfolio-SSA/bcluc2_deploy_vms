@@ -4,9 +4,9 @@
   become: true
   tasks:
     - name: Register with activationkey and consume subscriptions matching Red Hat Enterprise Server
-      redhat_subscription:
+      community.general.redhat_subscription:
         state: present
         activationkey: RHEL
         org_id: 7257185
         force_register: true
-        #auto_attach: true
+        # auto_attach: true
