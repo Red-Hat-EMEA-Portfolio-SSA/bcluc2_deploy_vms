@@ -7,6 +7,12 @@
   # https://access.redhat.com/solutions/5793031
 
   tasks:
+    - name: Register subscription manager to CDN in order to install rpms
+      redhat_subscription:
+        state: present
+        username: "{{ rhsm_username }}"
+        password: "{{ rhsm_password }}"
+        auto_attach: true
 
     - name: Install cloud-init and open-vm-tools
       ansible.builtin.dnf:

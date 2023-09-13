@@ -4,3 +4,4 @@ execution-environment/context
 key.pub
 inventory
 env.txt
+secrets.yml
