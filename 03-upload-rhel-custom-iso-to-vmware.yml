@@ -9,6 +9,20 @@
     my_destination_filename: "{{ my_vcenter_isofile_dir }}/{{ flavor[my_flavor].my_custom_iso_short }}"
 
   tasks:
+    - name: DEBU Copy file from host to DataStore
+      ansible.buitlin.debug:
+        msg: | 
+          hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
+          username: "{{ lookup('env', 'VMWARE_USER') }}"
+          password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+          validate_certs: false
+          src: "{{ my_source_file_full_filename }}"
+          datacenter: "{{ my_vcenter_datacenter_name }}"
+          datastore: "{{ my_vcenter_datastore_name }}"
+          path: "{{ my_destination_filename }}"
+          timeout: 120
+      when: debug | default(false)
+
     - name: Copy file from host to DataStore
       community.vmware.vsphere_copy:
         hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
