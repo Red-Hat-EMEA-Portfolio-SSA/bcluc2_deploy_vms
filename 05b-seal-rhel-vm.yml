@@ -98,6 +98,6 @@
         insertafter: "#PasswordAuthentication:"
         line: "PasswordAuthentication: yes"
 
-    - name: grep PasswordAuthentication from remote sshd_config
-      ansible.builtin.shell
-        cmd: grep PasswordAuthentication from remote sshd_config
+#    - name: grep PasswordAuthentication from remote sshd_config
+#      ansible.builtin.shell
+#        cmd: "grep PasswordAuthentication /etc/ssh/sshd_config"
