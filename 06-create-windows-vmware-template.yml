@@ -218,6 +218,7 @@
         placement:
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
+        session_timeout: 600
 
     -  name: debug debug | default('false') 
        debug:
