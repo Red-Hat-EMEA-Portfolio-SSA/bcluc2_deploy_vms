@@ -223,3 +223,6 @@
       vmware.vmware_rest.vcenter_vm:
         vm: "{{ my_vm.value[0].vm }}"
         state: absent
+      when: 
+        - deletevm | default('true') | bool
+        - not debug | default('false') | bool
