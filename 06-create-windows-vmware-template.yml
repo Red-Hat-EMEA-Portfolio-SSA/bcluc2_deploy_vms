@@ -219,6 +219,14 @@
           cluster: "{{ lookup('vmware.vmware_rest.cluster_moid', '/{{ my_vcenter_datacenter_name }}/host/{{ my_vcenter_cluster_name }}') }}"
           folder: "{{ lookup('vmware.vmware_rest.folder_moid', '/{{ my_vcenter_datacenter_name }}/vm/{{ my_vcenter_folder_name }}') }}"
 
+    -  name: debug debug | default('false') 
+       debug:
+         var: debug | default('false') 
+        
+    -  name: debug deletevm
+       debug:
+         var: deletevm
+        
     - name: Delete VM
       vmware.vmware_rest.vcenter_vm:
         vm: "{{ my_vm.value[0].vm }}"
