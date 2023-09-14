@@ -67,7 +67,7 @@
       loop: "{{ my_vms_created.results }}"
       when:
         - awx_inventory_name is not defined
-        - item.instance.hw_guest_id is 'rhel9_64Guest'
+        - item.instance.hw_guest_id is rhel9_64Guest
 
     - name: Add WIN Hosts to inventory
       ansible.builtin.add_host:
@@ -81,7 +81,7 @@
       loop: "{{ my_vms_created.results }}"
       when:
         - awx_inventory_name is not defined
-        - item.instance.hw_guest_id is 'windows2019srv_64Guest'
+        - item.instance.hw_guest_id is windows2019srv_64Guest
 
     - name: Add hosts to static inventory
       ansible.controller.host:
@@ -107,7 +107,7 @@
       delegate_to: localhost
       when:
         - awx_inventory_name is defined
-        - item.instance.hw_guest_id is 'rhel9_64Guest'
+        - item.instance.hw_guest_id is rhel9_64Guest
       loop: "{{ my_vms_created.results }}"
 
     - name: Create WIN host-groups
@@ -123,7 +123,7 @@
       delegate_to: localhost
       when:
         - awx_inventory_name is defined
-        - item.instance.hw_guest_id is 'windows2019srv_64Guest'
+        - item.instance.hw_guest_id is windows2019srv_64Guest
       loop: "{{ my_vms_created.results }}"
 
     - name: Add hosts to groups
