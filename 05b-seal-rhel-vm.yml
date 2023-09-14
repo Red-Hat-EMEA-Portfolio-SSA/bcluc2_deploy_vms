@@ -17,7 +17,7 @@
     - name: Install cloud-init and open-vm-tools
       ansible.builtin.dnf:
         name:
-          - cloud-init
+          ### - cloud-init
           - open-vm-tools
         state: present
 
@@ -98,3 +98,6 @@
         insertafter: "#PasswordAuthentication:"
         line: "PasswordAuthentication: yes"
 
+    - name: grep PasswordAuthentication from remote sshd_config
+      ansible.builtin.shell
+        cmd: grep PasswordAuthentication from remote sshd_config
