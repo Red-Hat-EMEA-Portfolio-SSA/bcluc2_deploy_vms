@@ -36,6 +36,7 @@
         template: "{{ item.my_template_name }}"
         datacenter: "{{ item.my_vcenter_datacenter_name }}"
         folder: "{{ item.my_vcenter_vm_parent_folder_name }}"
+        convert: thin
         state: poweredon
         cluster: "{{ item.my_vcenter_cluster_name }}"
         wait_for_ip_address: true
