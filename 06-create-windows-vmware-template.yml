@@ -173,6 +173,18 @@
         state: absent
       when: cdrom_template_vm.value[0] is defined
 
+    - name: Ensure all variables are populated before turning off VM                                                                                                                                              
+      community.vmware.vmware_guest_info:                                                                                                                                                                         
+        hostname: "{{ lookup('env', 'VMWARE_HOST') }}"                                                                                                                                                            
+        username: "{{ lookup('env', 'VMWARE_USER') }}"                                                                                                                                                            
+        password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"                                                                                                                                                        
+        datacenter: "{{ my_vcenter_datacenter_name }}"                                                                                                                                                       
+        name: _temporary_winvm_do_not_delete                                                                                                                                                                      
+      register: vm_status                                                                                                                                                                                         
+      until:                                                                                                                                                                                                      
+        - vm_status.instance.hw_guest_id is defined and vsphere.instance.hw_guest_id != ""                                                                                                                        
+        - vm_status.instance.hw_guest_full_name is defined and vsphere.instance.hw_guest_full_name != ""
+
     - name: Power off VM
       vmware.vmware_rest.vcenter_vm_power:
         state: stop
