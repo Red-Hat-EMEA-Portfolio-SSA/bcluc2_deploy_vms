@@ -71,7 +71,7 @@
         - awx_inventory_name is not defined
         - item.instance.hw_guest_id == "rhel9_64Guest"
 
-    - name: Add WIN Hosts to inventory
+    - name: Add WIN Hosts to cmd-line inventory
       ansible.builtin.add_host:
         name: "{{ item.instance.hw_name }}"
         ansible_host: "{{ item.instance.ipv4 }}"
@@ -87,7 +87,7 @@
         - awx_inventory_name is not defined
         - item.instance.hw_guest_id == "windows2019srv_64Guest"
 
-    - name: Add hosts to static inventory
+    - name: Add hosts to controller inventory
       ansible.controller.host:
         validate_certs: false
         inventory: "{{ awx_inventory_name }}"
