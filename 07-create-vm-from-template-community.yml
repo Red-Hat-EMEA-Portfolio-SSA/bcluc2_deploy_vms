@@ -42,7 +42,21 @@
         wait_for_ip_address: true
       loop: "{{ my_vms_from_template }}"
       ## loop: "{{ lookup('file', 'machines_def_vmware.yml') | from_yaml }}"
+
+    - name: Ensure all variables are populated before turning off VM                                                                                                                                              
+      community.vmware.vmware_guest_info:                                                                                                                                                                         
+        hostname: "{{ lookup('env', 'VMWARE_HOST') }}"                                                                                                                                                            
+        username: "{{ lookup('env', 'VMWARE_USER') }}"                                                                                                                                                            
+        password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"                                                                                                                                                        
+        validate_certs: false
+        datacenter: "{{ my_vcenter_datacenter_name }}"                                                                                                                                                       
+        name: "{{ item.my_vcenter_vm_name }}"
+      ##register: vm_status                                                                                                                                                                                         
       register: my_vms_created
+      until:                                                                                                                                                                                                      
+        - my_vms_created.instance.hw_guest_id is defined and my_vms_created.instance.hw_guest_id != ""                                                                                                                        
+        - my_vms_created.instance.hw_guest_full_name is defined and my_vms_created.instance.hw_guest_full_name != ""
+      loop: "{{ my_vms_from_template }}"
 
     - name: Print result of vm creation
       ansible.builtin.debug:
