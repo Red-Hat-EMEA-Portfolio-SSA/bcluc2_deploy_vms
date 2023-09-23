@@ -18,11 +18,12 @@
   ansible.builtin.include_tasks:
     file: rhel-iso.yml
 
-- name: Remove used packages (genisoimage, mkisofs, syslinux, isomd5sum)
-  ansible.builtin.yum:
-    name:
-      - genisoimage#
-      - mkisofs
-      - syslinux
-      - isomd5sum
-    state: absent
+# these tools are also needed elsewhere
+#- name: Remove used packages (genisoimage, mkisofs, syslinux, isomd5sum)
+#  ansible.builtin.yum:
+#    name:
+#      - genisoimage
+#      - mkisofs
+#      - syslinux
+#      - isomd5sum
+#    state: absent
