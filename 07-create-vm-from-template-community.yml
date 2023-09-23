@@ -139,6 +139,7 @@
         variables:
           ansible_connection: winrm
           ansible_winrm_transport: basic
+          ansible_winrm_server_cert_validation: ignore
       delegate_to: localhost
       when:
         - awx_inventory_name is defined
