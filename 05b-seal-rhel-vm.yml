@@ -91,12 +91,14 @@
         path: "{{ item }}"
         state: absent
 
-    - name: Allow password login via ssh
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: "^PasswordAuthentication:"
-        insertafter: "#PasswordAuthentication:"
-        line: "PasswordAuthentication: yes"
+# as we omit cloud-init this should not be neccessary 
+# and i want to avoid sshd_config being empty completely...
+#    - name: Allow password login via ssh
+#      ansible.builtin.lineinfile:
+#        path: /etc/ssh/sshd_config
+#        regexp: "^PasswordAuthentication:"
+#        insertafter: "#PasswordAuthentication:"
+#        line: "PasswordAuthentication: yes"
 
 #    - name: grep PasswordAuthentication from remote sshd_config
 #      ansible.builtin.shell
