@@ -78,7 +78,7 @@
         ansible_host: "{{ item.instance.ipv4 }}"
         groups: 
           - "{{ item.instance.hw_guest_id }}"
-          - "guestvm"
+          - "guestvms"
         # ansible_user:
         # ansible_password:
       loop: "{{ my_vms_created.results }}"
@@ -94,7 +94,7 @@
         ansible_winrm_transport: basic
         groups: 
           - "{{ item.instance.hw_guest_id }}"
-          - "guestvm"
+          - "guestvms"
         # ansible_user:
         # ansible_password:
       loop: "{{ my_vms_created.results }}"
@@ -146,12 +146,12 @@
         - item.instance.hw_guest_id == "windows2019srv_64Guest"
       loop: "{{ my_vms_created.results }}"
 
-    - name: Create guestvm host-group
+    - name: Create guestvms host-group
       # will create same group more than once...
       ansible.controller.group:
         validate_certs: false
         inventory: "{{ awx_inventory_name }}"
-        name: "guestvm"
+        name: "guestvms"
         state: present
       delegate_to: localhost
       when:
@@ -171,11 +171,11 @@
       when: awx_inventory_name is defined
       loop: "{{ my_vms_created.results }}"
 
-    - name: Add hosts to group guestvm
+    - name: Add hosts to group guestvms
       ansible.controller.group:
         validate_certs: false
         inventory: "{{ awx_inventory_name }}"
-        name: "guestvm"
+        name: "guestvms"
         hosts:
           - "{{ item.instance.hw_name }}"
         preserve_existing_hosts: true
