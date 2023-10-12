@@ -56,6 +56,8 @@
       until:                                                                                                                                                                                                      
         - my_vms_created.instance.hw_guest_id is defined and my_vms_created.instance.hw_guest_id != ""                                                                                                                        
         - my_vms_created.instance.hw_guest_full_name is defined and my_vms_created.instance.hw_guest_full_name != ""
+      retries: 30
+      delay: 10
       loop: "{{ my_vms_from_template }}"
 
     - name: Print result of vm creation
