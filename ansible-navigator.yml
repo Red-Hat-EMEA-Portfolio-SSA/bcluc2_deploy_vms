@@ -6,7 +6,7 @@ ansible-navigator:
         - ./inventory
   execution-environment:
     pull:
-      policy: missing
+      policy: always
     image: ghcr.io/red-hat-emea-portfolio-ssa/bcl_uc2:5
     environment-variables:
       pass:
