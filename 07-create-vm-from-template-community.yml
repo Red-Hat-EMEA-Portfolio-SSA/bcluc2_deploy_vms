@@ -81,6 +81,7 @@
         groups: 
           - "{{ item.instance.hw_guest_id }}"
           - "guestvms"
+          - "uc3_guest_targets"
         # ansible_user:
         # ansible_password:
       loop: "{{ my_vms_created.results }}"
@@ -97,6 +98,7 @@
         groups: 
           - "{{ item.instance.hw_guest_id }}"
           - "guestvms"
+          - "uc3_guest_targets"
         # ansible_user:
         # ansible_password:
       loop: "{{ my_vms_created.results }}"
@@ -148,16 +150,19 @@
         - item.instance.hw_guest_id == "windows2019srv_64Guest"
       loop: "{{ my_vms_created.results }}"
 
-    - name: Create guestvms host-group
+    - name: Create guestvms and uc3_guest_targets host-group
       # will create same group more than once...
       ansible.controller.group:
         validate_certs: false
         inventory: "{{ awx_inventory_name }}"
-        name: "guestvms"
+        name: "{{ item }}"
         state: present
       delegate_to: localhost
       when:
         - awx_inventory_name is defined
+      loop:
+        - "guestvms"
+        - "uc3_guest_targets"
 
     - name: Add hosts to groups
       ansible.controller.group:
@@ -173,16 +178,16 @@
       when: awx_inventory_name is defined
       loop: "{{ my_vms_created.results }}"
 
-    - name: Add hosts to group guestvms
+    - name: Add hosts to group guestvms and uc3_guest_targets
       ansible.controller.group:
         validate_certs: false
         inventory: "{{ awx_inventory_name }}"
-        name: "guestvms"
+        name: "{{ item[0] }}"
         hosts:
-          - "{{ item.instance.hw_name }}"
+          - "{{ item[1].instance.hw_name }}"
         preserve_existing_hosts: true
         # preserve_existing_children: True
         state: present
       delegate_to: localhost
       when: awx_inventory_name is defined
-      loop: "{{ my_vms_created.results }}"
+      loop: "{{ ['guestvms', 'uc3_guest_targets'] | product( my_vms_created.results ) | list }}"
